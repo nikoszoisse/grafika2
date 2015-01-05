@@ -15,6 +15,7 @@ Cube::Cube(float size,float distX,float distY,float distZ) {
 	this->x=size/2+distX;
 	this->y=size/2+distY;
 	this->z=size/2+distZ;
+	this->center = false;
 	setColor();
 }
 

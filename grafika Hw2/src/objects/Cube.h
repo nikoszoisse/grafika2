@@ -16,7 +16,7 @@ class Cube: public Object {
 	float size,distX,distY,distZ;
 	float x,y,z;
 	float color[3];
-	bool center=false;
+	bool center;
 	void createCube(float,float,float);
 	void setColor();
 public:
