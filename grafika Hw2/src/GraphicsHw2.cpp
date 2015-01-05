@@ -38,6 +38,34 @@ using namespace std;
 	float deltaMove = 0;
 	int xOrigin = -1;
 
+	void computePos(float deltaMove) {
+
+		x += deltaMove * lx * 0.1f;
+		z += deltaMove * lz * 0.1f;
+	}
+
+	void processNormalKeys(unsigned char key, int xx, int yy) {
+
+	        if (key == 27)
+	              exit(0);
+	}
+
+	void pressKey(int key, int xx, int yy) {
+
+	       switch (key) {
+	             case GLUT_KEY_UP : deltaMove = 0.5f; break;
+	             case GLUT_KEY_DOWN : deltaMove = -0.5f; break;
+	       }
+	}
+
+	void releaseKey(int key, int x, int y) {
+
+	        switch (key) {
+	             case GLUT_KEY_UP :
+	             case GLUT_KEY_DOWN : deltaMove = 0;break;
+	        }
+	}
+
 	void mouseMove(int x, int y) {
 
 		// this will only be true when the left button is down
@@ -49,9 +77,9 @@ using namespace std;
 			// update camera's direction
 			lx = sin(angle + deltaAngle);
 			lz = -cos(angle + deltaAngle);
-			//Rediplay or glRotafef() the panel
+			//Redisplay or glRotafef() the panel
 			cout << lx << lz << endl;
-			glutPostRedisplay();
+			//glutPostRedisplay();
 		}
 	}
 
@@ -107,6 +135,10 @@ using namespace std;
 		}
 
 	void renderScene(){
+
+		if (deltaMove)
+				computePos(deltaMove);
+
 		//Clear Color and Depth Buffers
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -138,9 +170,16 @@ using namespace std;
 		//Mouse LIsteners
 		glutMouseFunc(mouseButton);
 		glutMotionFunc(mouseMove);
+		glutIgnoreKeyRepeat(1);
+		glutKeyboardFunc(processNormalKeys);
+		glutSpecialFunc(pressKey);
+		glutSpecialUpFunc(releaseKey);
 
 		glutDisplayFunc(renderScene);
 		glutReshapeFunc(reshapeScene);
+		//redraw continuously
+		glutIdleFunc(renderScene);
+
 		// OpenGL init
 		glEnable(GL_DEPTH_TEST);
 		glutMainLoop();
