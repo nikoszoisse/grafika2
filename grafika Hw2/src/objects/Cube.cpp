@@ -7,7 +7,7 @@
 
 #include "Cube.h"
 
-Cube::Cube(float size,float distX,float distY,float distZ): Object(distX,distY,distZ) {
+Cube::Cube(float size,float distX,float distY,float distZ,bool center): Object(distX,distY,distZ) {
 	this->size = size;
 	this->distX=distX;
 	this->distY=distY;
@@ -15,7 +15,7 @@ Cube::Cube(float size,float distX,float distY,float distZ): Object(distX,distY,d
 	this->x=size/2+distX;
 	this->y=size/2+distY;
 	this->z=size/2+distZ;
-	this->center = false;
+	this->field_center =center;
 	setColor();
 }
 
@@ -25,10 +25,9 @@ Cube::~Cube() {
 
 
 void Cube::setColor(){
-	if((x==size/2)&&(y==size/2)&&(z=size/2)&&distZ==0){
+	if(field_center==true){
 		color[0]=1.0;
 		color[2]=1.0;
-		center=true;
 	}
 	else{
 		int number=rand()%4;
@@ -108,7 +107,7 @@ void Cube::view(){
 }
 
 Cube* Cube::getCenter(){
-	if(this->center==true){
+	if(this->field_center==true){
 		return this;
 	}
 	return NULL;

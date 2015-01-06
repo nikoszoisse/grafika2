@@ -16,11 +16,11 @@ class Cube: public Object {
 	float size,distX,distY,distZ;
 	float x,y,z;
 	GLfloat color[4];
-	bool center;
+	bool field_center;
 	void createCube(float,float,float);
 	void setColor();
 public:
-	Cube(float,float,float,float);
+	Cube(float,float,float,float,bool);
 	Cube* getCenter();
 	void view();
 	float getX();

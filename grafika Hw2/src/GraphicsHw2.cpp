@@ -20,6 +20,7 @@ using namespace std;
 	Character *player;
 	LightObject sun_light;
 
+	bool deltaMoveComputed=false;
 	int grid_size=64;
 	vector<Cube*> cubes;
 	float sizeOfCube=0.5;
@@ -31,7 +32,7 @@ using namespace std;
 	float lx=0.0f,lz=-1.0f;
 
 	// XZ position of the camera
-	float x=0.0f, z=5.0f;
+	float x=-16.5f, z=-14.5f;
 
 	// the key states. These variables will be zero
 	//when no key is being presses
@@ -52,12 +53,13 @@ using namespace std;
 	              exit(0);
 	}
 
-	void pressKey(int key, int xx, int yy) {
+	void pressKey(unsigned char key, int xx, int yy) {
 
 	       switch (key) {
-	             case GLUT_KEY_UP : deltaMove = 0.5f; break;
-	             case GLUT_KEY_DOWN : deltaMove = -0.5f; break;
+	             case 'w' : deltaMove = 0.5f; break;
+	             case 's' : deltaMove = -0.5f; break;
 	       }
+	       deltaMoveComputed=true;
 	}
 
 	void releaseKey(int key, int x, int y) {
@@ -101,10 +103,18 @@ using namespace std;
 	}
 
 	void createField(){
+		bool center=false;
 		//cubes.push_back(new Cube(sizeOfCube,0,0,0));
 		for(int i=0;i<grid_size;i++){
 			for(int j=0;j<grid_size;j++){
-					cubes.push_back(new Cube(sizeOfCube,-i*(sizeOfCube+0.01),0,-j*sizeOfCube));
+				if(i==grid_size/2&&j==grid_size/2){
+					center=true;
+					cubes.push_back(new Cube(sizeOfCube,-i*(sizeOfCube+0.01),0,-j*sizeOfCube,center));
+				}
+				else{
+					center=false;
+					cubes.push_back(new Cube(sizeOfCube,-i*(sizeOfCube+0.01),0,-j*sizeOfCube,center));
+				}
 					//cubes.push_back(new Cube(sizeOfCube,i*(sizeOfCube+0.01),0,-j*sizeOfCube));
 			}
 		}
@@ -137,8 +147,10 @@ using namespace std;
 
 	void renderScene(){
 
-		if (deltaMove)
+		if (deltaMoveComputed){
 				computePos(deltaMove);
+				deltaMoveComputed=false;
+		}
 
 		//Clear Color and Depth Buffers
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -171,8 +183,8 @@ using namespace std;
 		glutMouseFunc(mouseButton);
 		glutMotionFunc(mouseMove);
 		glutIgnoreKeyRepeat(1);
-		glutKeyboardFunc(processNormalKeys);
-		glutSpecialFunc(pressKey);
+		glutKeyboardFunc(pressKey);
+		//glutSpecialFunc(pressKey);
 		glutSpecialUpFunc(releaseKey);
 
 		// OpenGL init
