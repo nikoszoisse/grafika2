@@ -42,6 +42,7 @@ using namespace std;
 
 		x += deltaMove * lx * 0.1f;
 		z += deltaMove * lz * 0.1f;
+		cout << x << z <<endl;
 	}
 
 	void processNormalKeys(unsigned char key, int xx, int yy) {
@@ -53,8 +54,8 @@ using namespace std;
 	void pressKey(int key, int xx, int yy) {
 
 	       switch (key) {
-	             case GLUT_KEY_UP : deltaMove = 0.5f; break;
-	             case GLUT_KEY_DOWN : deltaMove = -0.5f; break;
+	             case GLUT_KEY_UP : deltaMove = 0.5f; glutPostRedisplay();break;
+	             case GLUT_KEY_DOWN : deltaMove = -0.5f; glutPostRedisplay();break;
 	       }
 	}
 
@@ -62,7 +63,7 @@ using namespace std;
 
 	        switch (key) {
 	             case GLUT_KEY_UP :
-	             case GLUT_KEY_DOWN : deltaMove = 0;break;
+	             case GLUT_KEY_DOWN : deltaMove = 0;glutPostRedisplay();break;
 	        }
 	}
 
@@ -79,7 +80,7 @@ using namespace std;
 			lz = -cos(angle + deltaAngle);
 			//Redisplay or glRotafef() the panel
 			cout << lx << lz << endl;
-			//glutPostRedisplay();
+			glutPostRedisplay();
 		}
 	}
 
@@ -178,7 +179,7 @@ using namespace std;
 		glutDisplayFunc(renderScene);
 		glutReshapeFunc(reshapeScene);
 		//redraw continuously
-		glutIdleFunc(renderScene);
+		//glutIdleFunc(renderScene);
 
 		// OpenGL init
 		glEnable(GL_DEPTH_TEST);
