@@ -3,6 +3,7 @@
 	<name>grafika Hw2</name>
 	<comment></comment>
 	<projects>
+		<project>test</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
