@@ -13,7 +13,7 @@
 
 class Character: public Object{
 public:
-	Character();
+	Character(float,float,float);
 	virtual ~Character();
 };
 

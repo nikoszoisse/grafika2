@@ -7,7 +7,7 @@
 
 #include "Cube.h"
 
-Cube::Cube(float size,float distX,float distY,float distZ) {
+Cube::Cube(float size,float distX,float distY,float distZ): Object(distX,distY,distZ) {
 	this->size = size;
 	this->distX=distX;
 	this->distY=distY;
@@ -47,6 +47,8 @@ void Cube::setColor(){
 			color[1]=1.0;
 		}
 	}
+	//ALpa
+	color[3] = 1.0;
 }
 
 void Cube::createCube(float distanceX,float distanceY,float distanceZ){
@@ -101,6 +103,11 @@ glEnd();
 
 
 void Cube::view(){
+	this->ambient_color = this->color;
+	this->diffuse_color = this->color;
+	this->specular_color = new GLfloat[4]{1.0,1.0,1.0,1.0};
+	this->shininess = 20;
+	applyMaterial();
 	createCube(distX,distY,distZ);
 }
 

@@ -15,7 +15,7 @@ class Cube: public Object {
 	private:
 	float size,distX,distY,distZ;
 	float x,y,z;
-	float color[3];
+	GLfloat color[4];
 	bool center;
 	void createCube(float,float,float);
 	void setColor();

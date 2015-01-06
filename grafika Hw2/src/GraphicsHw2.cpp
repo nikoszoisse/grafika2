@@ -18,8 +18,9 @@
 using namespace std;
 
 	Character *player;
+	LightObject sun_light;
+
 	int grid_size=64;
-	LightObject sun;
 	vector<Cube*> cubes;
 	float sizeOfCube=0.5;
 
@@ -54,8 +55,8 @@ using namespace std;
 	void pressKey(int key, int xx, int yy) {
 
 	       switch (key) {
-	             case GLUT_KEY_UP : deltaMove = 0.5f; glutPostRedisplay();break;
-	             case GLUT_KEY_DOWN : deltaMove = -0.5f; glutPostRedisplay();break;
+	             case GLUT_KEY_UP : deltaMove = 0.5f; break;
+	             case GLUT_KEY_DOWN : deltaMove = -0.5f; break;
 	       }
 	}
 
@@ -63,7 +64,7 @@ using namespace std;
 
 	        switch (key) {
 	             case GLUT_KEY_UP :
-	             case GLUT_KEY_DOWN : deltaMove = 0;glutPostRedisplay();break;
+	             case GLUT_KEY_DOWN : deltaMove = 0;break;
 	        }
 	}
 
@@ -80,7 +81,6 @@ using namespace std;
 			lz = -cos(angle + deltaAngle);
 			//Redisplay or glRotafef() the panel
 			cout << lx << lz << endl;
-			glutPostRedisplay();
 		}
 	}
 
@@ -150,12 +150,11 @@ using namespace std;
 		gluLookAt(	x, 1.0f, z,
 				x+lx, 1.0f,  z+lz,
 				0.0f, 1.0f,  0.0f);
-
+		sun_light.enableLight();
 		// Draw the GROUND
 		for (vector<Cube*>::iterator it = cubes.begin() ; it != cubes.end(); ++it){
 			(*it)->view();
 		}
-		cout << cubes.size() << endl;
 
 
 		glutSwapBuffers();
@@ -176,13 +175,23 @@ using namespace std;
 		glutSpecialFunc(pressKey);
 		glutSpecialUpFunc(releaseKey);
 
+		// OpenGL init
+		glEnable(GL_DEPTH_TEST);
+	    glShadeModel(GL_SMOOTH);
+
+	    // Renormalize scaled normals so that lighting still works properly.
+	    glEnable( GL_NORMALIZE);
+
+		// Specify a global ambient
+		GLfloat globalAmbient[] = { 0.2, 0.2, 0.2, 1.0 };
+		glLightModelfv( GL_LIGHT_MODEL_AMBIENT, globalAmbient );
+		glEnable(GL_LIGHTING);
+
 		glutDisplayFunc(renderScene);
 		glutReshapeFunc(reshapeScene);
 		//redraw continuously
-		//glutIdleFunc(renderScene);
+		glutIdleFunc(renderScene);
 
-		// OpenGL init
-		glEnable(GL_DEPTH_TEST);
 		glutMainLoop();
 
 	}
