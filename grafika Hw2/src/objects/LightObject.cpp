@@ -41,12 +41,12 @@ LightObject::LightObject(){
 	qaDiffuseLight = new GLfloat[4]{0.8, 0.8, 0.8, 1.0};
 	qaSpecularLight = new GLfloat[4]{1.0, 1.0, 1.0, 1.0};
 	// Light source position
-	qaLightPosition    = new GLfloat[4]{0.5, 0, -3.5, 0.5};
+	qaLightPosition    = new GLfloat[4]{0.5, 5.0, 3.5, 0.5};
 
 	spotExponent = 0.0;
 	spotCutoff = 180.0f;
 
-	spotDirection = new GLfloat[4]{0.0,0.0,1.0};
+	spotDirection = new GLfloat[4]{-3.0,0.0,1.0};
 
 	constantAttenuation = 1.0;
 	linearAttenuation = 0.0;

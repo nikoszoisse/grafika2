@@ -103,11 +103,7 @@ glEnd();
 
 
 void Cube::view(){
-	this->ambient_color = this->color;
-	this->diffuse_color = this->color;
-	this->specular_color = new GLfloat[4]{1.0,1.0,1.0,1.0};
-	this->shininess = 20;
-	applyMaterial();
+	applyMaterial(color,color,new GLfloat[4]{1.0,1.0,1.0,1.0},20);
 	createCube(distX,distY,distZ);
 }
 

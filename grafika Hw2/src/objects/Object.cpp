@@ -22,7 +22,7 @@ Object::Object(float x,float y,float z) {
 	shininess = 0.0;
 }
 /**
- * Apply MAterial to an Object
+ * Apply MAterial to an Object with default values
  */
 void Object::applyMaterial() {
 	  	  	glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, this->ambient_color);
@@ -30,6 +30,38 @@ void Object::applyMaterial() {
 	        glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, this->specular_color);
 	        glMaterialfv( GL_FRONT_AND_BACK, GL_EMISSION, this->emission_color);
 	        glMaterialf( GL_FRONT_AND_BACK, GL_SHININESS, this->shininess);
+}
+/**
+ * Apply MAterial to an Object
+ *
+ * @param ambient_color
+ * @param diffuse_color
+ * @param specular_color
+ * @param shininess
+ */
+void Object::applyMaterial(GLfloat *ambient_color,GLfloat *diffuse_color
+		,GLfloat *specular_color,GLfloat shininess) {
+	this->ambient_color = ambient_color;
+	this->diffuse_color = diffuse_color;
+	this->specular_color = specular_color;
+	this->shininess = shininess;
+	this->applyMaterial();
+}
+
+/**
+ * Apply MAterial to an Object
+ *
+ * @param ambient_color
+ * @param diffuse_color
+ * @param specular_color
+ * @param emission_color
+ * @param shininess
+ */
+void Object::applyMaterial(GLfloat *ambient_color,GLfloat *diffuse_color
+		,GLfloat *specular_color, GLfloat *emission_color,GLfloat shininess) {
+	this->emission_color = emission_color;
+
+	this->applyMaterial(ambient_color,diffuse_color,specular_color,shininess);
 }
 
 Object::~Object() {

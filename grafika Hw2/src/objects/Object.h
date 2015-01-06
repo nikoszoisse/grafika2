@@ -33,6 +33,8 @@ protected:
 	GLfloat shininess;
 
 	void applyMaterial();
+	void applyMaterial(GLfloat*,GLfloat*,GLfloat*,GLfloat);
+	void applyMaterial(GLfloat*,GLfloat*,GLfloat*,GLfloat*,GLfloat);
 public:
 	Object(float,float,float);
 	virtual void view()=0;
