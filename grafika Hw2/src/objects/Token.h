@@ -18,7 +18,11 @@ public:
 	Token(float,float,float,float);
 	virtual ~Token();
 	void view();
+	void set_range_cons();
+	void set_range_qua();
+	void set_range_lin();
 	void setPosition(float,float,float);
+	void reset_range();
 };
 
 #endif /* Token_H_ */

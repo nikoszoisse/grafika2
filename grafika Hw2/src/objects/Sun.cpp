@@ -13,7 +13,7 @@
 Sun::Sun(float x,float y,float z,float radius)
 		:Object(x,y,z),LightObject(x,y,z){
 	this->radius = radius;
-	this->color = new GLfloat[4]{255, 255, 34, 1};
+	this->color = new GLfloat[4]{255, 255, 34, 1.0};
 }
 
 Sun::~Sun() {
@@ -21,18 +21,22 @@ Sun::~Sun() {
 }
 
 void Sun::view(){
-	this->enableLight();
 	//Its right values for sun
 	glPushMatrix();
 	glTranslatef(x_point,y_point,z_point);
-	glColor4f(255, 255, 34,0.3);
-	GLfloat *amb = new GLfloat[4]{color[0]/2.0,color[1]/2.0,color[2]/2.0,1.0};
-	//this->applyMaterial(amb,color,color,100);
+	glColor4f(color[0],color[1], color[2],color[3]);
+	this->applyMaterial(color,color,color,100);
     glutSolidSphere(radius,20,20);
     glPopMatrix();
+    //We wont anable it for other items not sun
+	this->enableLight();
 }
 
 void Sun::setPosition(float x,float y,float z){
 	this->setObjPos(x,y,z);
 	this->setLightPos(x,y,z-radius/2);
+}
+
+void Sun::hide(){
+	this->disableLight();
 }

@@ -14,7 +14,9 @@
  * @param z_pos
  */
 LightObject::LightObject(float x_pos,float y_pos,float z_pos) {
-	lightId = GL_LIGHT0+num_of_lights;
+
+	lightId = GL_LIGHT0 +num_of_lights;
+	cout << "Num "<< num_of_lights<<endl;
 	num_of_lights++;
 
 	// Set lighting intensity and color
@@ -27,7 +29,7 @@ LightObject::LightObject(float x_pos,float y_pos,float z_pos) {
 	spotExponent = 0.0f;
 	spotCutoff = 180.0f;
 
-	spotDirection = new GLfloat[4]{0.0f,0.0f,1.0f};
+	spotDirection = new GLfloat[4]{0.0f,0.0f,1.0f,0.0f};
 
 	constantAttenuation = 1.0f;
 	linearAttenuation = 0.0f;
@@ -38,7 +40,7 @@ LightObject::LightObject(float x_pos,float y_pos,float z_pos) {
  * Enables The light of an Object
  */
 void LightObject::enableLight() {
-    // Disabling lighting
+    // enable lighting
 	glDisable(GL_LIGHTING);
      glEnable(this->lightId);
 		glLightfv( lightId, GL_AMBIENT, this->qaAmbientLight);
@@ -69,7 +71,7 @@ void LightObject::setLightPos(float x_pos, float y_pos, float z_pos) {
 
 void LightObject::setSpotDirection(float x_pos, float y_pos, float z_pos) {
 	this->disableLight();
-	this->spotDirection  = new GLfloat[3]{x_pos,y_pos,z_pos};
+	this->spotDirection  = new GLfloat[4]{x_pos,y_pos,z_pos,0.0f};
 }
 
 LightObject::~LightObject() {

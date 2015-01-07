@@ -9,10 +9,13 @@
 #define SRC_LIGHTOBJECT_H_
 
 #include "Object.h"
+static int num_of_lights = 0;
+
+#include<iostream>
+using namespace std;
 
 class LightObject{
 private:
-	static int num_of_lights=0;
 	GLenum 	lightId;
 
 	// Light source position
@@ -20,6 +23,7 @@ private:
 
 	GLfloat *spotDirection;
 protected:
+
 	// Set lighting intensity and color
 	GLfloat *qaAmbientLight;
 	GLfloat *qaDiffuseLight;
@@ -39,5 +43,6 @@ public:
 	LightObject();
 	virtual ~LightObject();
 };
+
 
 #endif /* SRC_LIGHTOBJECT_H_ */

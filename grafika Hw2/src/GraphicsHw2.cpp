@@ -17,24 +17,24 @@
 #include "./objects/Sun.h"
 #include "./objects/Token.h"
 
+#define grid_size 64
 
 using namespace std;
 
 	//Character *player;
 	Sun *sun = new Sun(1,1,65,3);
 
-	int grid_size=64;
 	vector<Cube*> cubes;
 	vector<Token*> tokens;
-	float sizeOfCube=0.5;
+	float sizeOfCube=1;
 
 	// angle of rotation for the camera direction
 	float xangle = 0.0f;
 	float yangle = 0.0f;
-
+	bool sun_to_view = false;
 	// actual vector representing the camera's direction
 	//float lx=0.0f,lz=-1.0f;
-	float lx=1.0f,ly=1.0f,lz=1.0f;
+	float lx=0.0f,ly=0.0f,lz=1.0f;
 
 	// XZ position of the camera
 	//float x=-16.5f, z=-14.5f;
@@ -64,51 +64,52 @@ using namespace std;
 	              exit(0);
 	}
 
-	void pressKey(unsigned char key, int x, int y) {
+	void pressKey(unsigned char key, int xx, int yy) {
 
 	       switch (key) {
 	             case 'w' : fwd_deltaMove = 0.5f; break;
 	             case 's' : fwd_deltaMove = -0.5f; break;
 	             case 'a' : side_deltaMove = 0.5f; break;
 	             case 'd' : side_deltaMove = -0.5f; break;
-	             //TODO remove z, is for testing light Post
+	             //TODO remove z, is for testing light Position
 	             case 'z' : sun->setPosition(1.0f,64.0f,65.0f);break;
 	             case 'x' : sun->setPosition(1.0f,1.0f,65.0f);break;
-	             case 'c' : break;
+	             //Hide the sun
+	             case 'c' : sun_to_view = !sun_to_view;sun->hide();break;
 	             case 'v' : x = 0.0f;z=0.0f;break;
-	             case 'l' : tokens.push_back(new Token(x,y,z,1));break;
+	             case 'l' : cout << x<<", "<<z<<endl;tokens.push_back(new Token(x+lx,2,z+lz,0.3));break;
 	       }
 	}
 
-	void releaseKey(unsigned char key, int x, int y) {
+	void releaseKey(unsigned char key, int xx, int yy) {
 
 	        switch (key) {
 	             case 'w' :
 	             case 's' : fwd_deltaMove = 0.0f;break;
 	             case 'a' :
 	             case 'd' : side_deltaMove = 0.0f;break;
-	             case 'z': cout << "z released" <<endl;break;
-	             case 'l': cout << "l released" <<endl;break;
 	        }
 	}
 
-	void mouseMove(int x, int y) {
+	void mouseMove(int mx, int my) {
 
 		// this will only be true when the left button is down
 		if (xOrigin >= 0) {
 
 			// update deltaAngle
-			xdeltaAngle = (x - xOrigin) * 0.001f;
-			ydeltaAngle = (y- yOrigin) * 0.001f;
+			xdeltaAngle = (mx - xOrigin) * 0.001f;
+			ydeltaAngle = (my- yOrigin) * 0.001f;
 
 			// update camera's direction  (EYE)
 			lx = sin(xangle + xdeltaAngle);
-			ly = -sin(yangle + ydeltaAngle);
+			ly = sin(yangle + ydeltaAngle);
 			lz = -cos(xangle + xdeltaAngle);
+
+			cout << x <<", "<< z <<endl;
 		}
 	}
 
-	void mouseButton(int button, int state, int x, int y) {
+	void mouseButton(int button, int state, int mx, int my) {
 
 		// only start motion if the left button is pressed
 		if (button == GLUT_LEFT_BUTTON) {
@@ -121,8 +122,8 @@ using namespace std;
 				yOrigin = -1.0f;
 			}
 			else  {// state = GLUT_DOWN
-				xOrigin = x;
-				yOrigin = y;
+				xOrigin = mx;
+				yOrigin = my;
 			}
 		}
 	}
@@ -142,11 +143,11 @@ using namespace std;
 			}
 		}*/
 
-		for(int i=0;i<grid_size;i++){
-					for(int j=0;j<grid_size;j++){
+		for(int i=0;i<=grid_size;i++){
+					for(int j=0;j<=grid_size;j++){
 						if(i==grid_size/2&&j==grid_size/2){
 							center=true;
-							cubes.push_back(new Cube(sizeOfCube,i*(sizeOfCube+0.01),0,j*sizeOfCube,center));
+							cubes.push_back(new Cube(sizeOfCube,i*(sizeOfCube+0.01),0,j*(sizeOfCube+0.01),center));
 						}
 						else{
 							center=false;
@@ -196,8 +197,9 @@ using namespace std;
 		gluLookAt(	x, y, z,
 				x+lx, y+ly,  z+lz,
 				0.0f, 1.0f,  0.0f);
-
-		sun->view();
+		if(sun_to_view){
+			sun->view();
+		}
 		/*//TODO remove them Is for Testing
 		glLineWidth(5);
 		//X
@@ -258,7 +260,7 @@ using namespace std;
 
 		// Specify a global ambient
 		GLfloat globalAmbient[] = { 0.2, 0.2, 0.2, 1.0 };
-		glLightModelfv( GL_LIGHT_MODEL_AMBIENT, globalAmbient );
+		//glLightModelfv( GL_LIGHT_MODEL_AMBIENT, globalAmbient );
 		glEnable(GL_LIGHTING);
 
 		glutDisplayFunc(renderScene);
