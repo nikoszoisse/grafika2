@@ -20,7 +20,6 @@ using namespace std;
 	Character *player;
 	LightObject sun_light;
 
-	bool deltaMoveComputed=false;
 	int grid_size=64;
 	vector<Cube*> cubes;
 	float sizeOfCube=0.5;
@@ -44,7 +43,6 @@ using namespace std;
 
 		x += deltaMove * lx * 0.1f;
 		z += deltaMove * lz * 0.1f;
-		cout << x << z <<endl;
 	}
 
 	void processNormalKeys(unsigned char key, int xx, int yy) {
@@ -53,20 +51,19 @@ using namespace std;
 	              exit(0);
 	}
 
-	void pressKey(unsigned char key, int xx, int yy) {
+	void pressKey(unsigned char key, int x, int y) {
 
 	       switch (key) {
 	             case 'w' : deltaMove = 0.5f; break;
 	             case 's' : deltaMove = -0.5f; break;
 	       }
-	       deltaMoveComputed=true;
 	}
 
-	void releaseKey(int key, int x, int y) {
+	void releaseKey(unsigned char key, int x, int y) {
 
 	        switch (key) {
-	             case GLUT_KEY_UP :
-	             case GLUT_KEY_DOWN : deltaMove = 0;break;
+	             case 'w' :
+	             case 's' : deltaMove = 0;break;
 	        }
 	}
 
@@ -82,7 +79,6 @@ using namespace std;
 			lx = sin(angle + deltaAngle);
 			lz = -cos(angle + deltaAngle);
 			//Redisplay or glRotafef() the panel
-			cout << lx << lz << endl;
 		}
 	}
 
@@ -104,7 +100,6 @@ using namespace std;
 
 	void createField(){
 		bool center=false;
-		//cubes.push_back(new Cube(sizeOfCube,0,0,0));
 		for(int i=0;i<grid_size;i++){
 			for(int j=0;j<grid_size;j++){
 				if(i==grid_size/2&&j==grid_size/2){
@@ -115,7 +110,6 @@ using namespace std;
 					center=false;
 					cubes.push_back(new Cube(sizeOfCube,-i*(sizeOfCube+0.01),0,-j*sizeOfCube,center));
 				}
-					//cubes.push_back(new Cube(sizeOfCube,i*(sizeOfCube+0.01),0,-j*sizeOfCube));
 			}
 		}
 
@@ -147,9 +141,8 @@ using namespace std;
 
 	void renderScene(){
 
-		if (deltaMoveComputed){
+		if (deltaMove){
 				computePos(deltaMove);
-				deltaMoveComputed=false;
 		}
 
 		//Clear Color and Depth Buffers
@@ -184,8 +177,9 @@ using namespace std;
 		glutMotionFunc(mouseMove);
 		glutIgnoreKeyRepeat(1);
 		glutKeyboardFunc(pressKey);
+		glutKeyboardUpFunc(releaseKey);
 		//glutSpecialFunc(pressKey);
-		glutSpecialUpFunc(releaseKey);
+		//glutSpecialUpFunc(releaseKey);
 
 		// OpenGL init
 		glEnable(GL_DEPTH_TEST);
