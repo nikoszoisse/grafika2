@@ -19,11 +19,6 @@ Cube::Cube(float size,float distX,float distY,float distZ,bool center): Object(d
 	setColor();
 }
 
-Cube::~Cube() {
-	// TODO Auto-generated destructor stub
-}
-
-
 void Cube::setColor(){
 	if(field_center==true){
 		color[0]=1.0;
@@ -101,11 +96,6 @@ glEnd();
 }
 
 
-void Cube::view(){
-	applyMaterial(color,color,new GLfloat[4]{1.0,1.0,1.0,1.0},20);
-	createCube(distX,distY,distZ);
-}
-
 Cube* Cube::getCenter(){
 	if(this->field_center==true){
 		return this;
@@ -123,4 +113,17 @@ float Cube::getY(){
 
 float Cube::getZ(){
 	return z;
+}
+
+void Cube::view(){
+	GLfloat *amb_color = new GLfloat[4]{0.1,0.1,0.1,1.0};//new GLfloat[4]{color[0]/2.0,color[1]/2.0,color[2]/2.0,1.0};
+	applyMaterial(amb_color,color,new GLfloat[4]{1.0,1.0,1.0,1.0},50);
+	createCube(distX,distY,distZ);
+}
+
+void Cube::setPosition(float x, float y, float z) {
+}
+
+Cube::~Cube() {
+	// TODO Auto-generated destructor stub
 }

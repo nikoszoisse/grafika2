@@ -14,35 +14,48 @@
 #include "./objects/Cube.h"
 #include "./objects/Character.h"
 #include "./objects/LightObject.h"
+#include "./objects/Sun.h"
+#include "./objects/Token.h"
+
 
 using namespace std;
 
-	Character *player;
-	LightObject sun_light;
+	//Character *player;
+	Sun *sun = new Sun(1,1,65,3);
 
 	int grid_size=64;
 	vector<Cube*> cubes;
+	vector<Token*> tokens;
 	float sizeOfCube=0.5;
 
 	// angle of rotation for the camera direction
-	float angle = 0.0f;
+	float xangle = 0.0f;
+	float yangle = 0.0f;
 
 	// actual vector representing the camera's direction
-	float lx=0.0f,lz=-1.0f;
+	//float lx=0.0f,lz=-1.0f;
+	float lx=1.0f,ly=1.0f,lz=1.0f;
 
 	// XZ position of the camera
-	float x=-16.5f, z=-14.5f;
+	//float x=-16.5f, z=-14.5f;
+	float x=32.0f, y=1.0f, z=32.0f;
 
 	// the key states. These variables will be zero
 	//when no key is being presses
-	float deltaAngle = 0.0f;
-	float deltaMove = 0;
+	float xdeltaAngle = 0.0f;
+	float ydeltaAngle = 0.0f;
+	float fwd_deltaMove = 0;
+	float side_deltaMove = 0;
 	int xOrigin = -1;
+	int yOrigin = -1;
 
-	void computePos(float deltaMove) {
-
+	void computePos() {
+		/*These VAlues depended from camera, we dont
 		x += deltaMove * lx * 0.1f;
 		z += deltaMove * lz * 0.1f;
+		*/
+		x += side_deltaMove * 0.3f;
+		z += fwd_deltaMove * 0.3f;
 	}
 
 	void processNormalKeys(unsigned char key, int xx, int yy) {
@@ -54,8 +67,16 @@ using namespace std;
 	void pressKey(unsigned char key, int x, int y) {
 
 	       switch (key) {
-	             case 'w' : deltaMove = 0.5f; break;
-	             case 's' : deltaMove = -0.5f; break;
+	             case 'w' : fwd_deltaMove = 0.5f; break;
+	             case 's' : fwd_deltaMove = -0.5f; break;
+	             case 'a' : side_deltaMove = 0.5f; break;
+	             case 'd' : side_deltaMove = -0.5f; break;
+	             //TODO remove z, is for testing light Post
+	             case 'z' : sun->setPosition(1.0f,64.0f,65.0f);break;
+	             case 'x' : sun->setPosition(1.0f,1.0f,65.0f);break;
+	             case 'c' : break;
+	             case 'v' : x = 0.0f;z=0.0f;break;
+	             case 'l' : tokens.push_back(new Token(x,y,z,1));break;
 	       }
 	}
 
@@ -63,7 +84,11 @@ using namespace std;
 
 	        switch (key) {
 	             case 'w' :
-	             case 's' : deltaMove = 0;break;
+	             case 's' : fwd_deltaMove = 0.0f;break;
+	             case 'a' :
+	             case 'd' : side_deltaMove = 0.0f;break;
+	             case 'z': cout << "z released" <<endl;break;
+	             case 'l': cout << "l released" <<endl;break;
 	        }
 	}
 
@@ -73,12 +98,13 @@ using namespace std;
 		if (xOrigin >= 0) {
 
 			// update deltaAngle
-			deltaAngle = (x - xOrigin) * 0.001f;
+			xdeltaAngle = (x - xOrigin) * 0.001f;
+			ydeltaAngle = (y- yOrigin) * 0.001f;
 
-			// update camera's direction
-			lx = sin(angle + deltaAngle);
-			lz = -cos(angle + deltaAngle);
-			//Redisplay or glRotafef() the panel
+			// update camera's direction  (EYE)
+			lx = sin(xangle + xdeltaAngle);
+			ly = -sin(yangle + ydeltaAngle);
+			lz = -cos(xangle + xdeltaAngle);
 		}
 	}
 
@@ -89,18 +115,21 @@ using namespace std;
 
 			// when the button is released
 			if (state == GLUT_UP) {
-				angle += deltaAngle;
-				xOrigin = -1;
+				xangle += xdeltaAngle;
+				xOrigin = -1.0f;
+				yangle += ydeltaAngle;
+				yOrigin = -1.0f;
 			}
 			else  {// state = GLUT_DOWN
 				xOrigin = x;
+				yOrigin = y;
 			}
 		}
 	}
 
 	void createField(){
 		bool center=false;
-		for(int i=0;i<grid_size;i++){
+		/*for(int i=0;i<grid_size;i++){
 			for(int j=0;j<grid_size;j++){
 				if(i==grid_size/2&&j==grid_size/2){
 					center=true;
@@ -111,7 +140,20 @@ using namespace std;
 					cubes.push_back(new Cube(sizeOfCube,-i*(sizeOfCube+0.01),0,-j*sizeOfCube,center));
 				}
 			}
-		}
+		}*/
+
+		for(int i=0;i<grid_size;i++){
+					for(int j=0;j<grid_size;j++){
+						if(i==grid_size/2&&j==grid_size/2){
+							center=true;
+							cubes.push_back(new Cube(sizeOfCube,i*(sizeOfCube+0.01),0,j*sizeOfCube,center));
+						}
+						else{
+							center=false;
+							cubes.push_back(new Cube(sizeOfCube,i*(sizeOfCube+0.01),0,j*sizeOfCube,center));
+						}
+					}
+				}
 
 	}
 
@@ -140,9 +182,8 @@ using namespace std;
 		}
 
 	void renderScene(){
-
-		if (deltaMove){
-				computePos(deltaMove);
+		if (fwd_deltaMove || side_deltaMove){
+				computePos();
 		}
 
 		//Clear Color and Depth Buffers
@@ -150,12 +191,39 @@ using namespace std;
 
 		//Reset transformations
 		glLoadIdentity();
-
+		glTranslatef(.0, .0, -5);
 		// Set the camera
-		gluLookAt(	x, 1.0f, z,
-				x+lx, 1.0f,  z+lz,
+		gluLookAt(	x, y, z,
+				x+lx, y+ly,  z+lz,
 				0.0f, 1.0f,  0.0f);
-		sun_light.enableLight();
+
+		sun->view();
+		/*//TODO remove them Is for Testing
+		glLineWidth(5);
+		//X
+		glBegin(GL_LINES);
+			glColor4f(255,0,0,1.0);
+		  glVertex3f(-32.0f, 0.0f, 0.0f);
+		  glVertex3f(32.0f, 1.0f, 0.0f);
+		glEnd();
+		//Y
+		glBegin(GL_LINES);
+			glColor4f(0,255,0,1.0);
+		  glVertex3f(0.0f, -32.0f, 0.0f);
+		  glVertex3f(0.0f, 32.0f, 0.0f);
+		glEnd();
+		//Z
+		glBegin(GL_LINES);
+			glColor4f(0,0,255,1.0);
+		  glVertex3f(0.0f, 0.0f, -32.0f);
+		  glVertex3f(0.0f, 0.0f, 32.0f);
+		glEnd();*/
+
+		// Draw the TOkens
+		for (vector<Token*>::iterator it = tokens.begin() ; it != tokens.end(); ++it){
+			(*it)->view();
+		}
+
 		// Draw the GROUND
 		for (vector<Cube*>::iterator it = cubes.begin() ; it != cubes.end(); ++it){
 			(*it)->view();

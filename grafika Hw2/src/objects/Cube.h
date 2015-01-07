@@ -23,6 +23,7 @@ public:
 	Cube(float,float,float,float,bool);
 	Cube* getCenter();
 	void view();
+	void setPosition(float,float,float);
 	float getX();
 	float getY();
 	float getZ();

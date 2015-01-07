@@ -14,6 +14,8 @@
 class Character: public Object{
 public:
 	Character(float,float,float);
+	void view();
+	void setPosition(float,float,float);
 	virtual ~Character();
 };
 

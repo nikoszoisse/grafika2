@@ -14,50 +14,31 @@
  * @param z_pos
  */
 LightObject::LightObject(float x_pos,float y_pos,float z_pos) {
-	lightId = GL_LIGHT0;
+	lightId = GL_LIGHT0+num_of_lights;
+	num_of_lights++;
 
 	// Set lighting intensity and color
 	qaAmbientLight = new GLfloat[4]{0.2, 0.2, 0.2, 1.0};
 	qaDiffuseLight = new GLfloat[4]{0.8, 0.8, 0.8, 1.0};
 	qaSpecularLight = new GLfloat[4]{1.0, 1.0, 1.0, 1.0};
 	// Light source position
-	qaLightPosition    = new GLfloat[4]{0.5, 0, -3.5, 0.5};
+	qaLightPosition    = new GLfloat[4]{x_pos, y_pos, z_pos, 1.0};
 
-	spotExponent = 0.0;
+	spotExponent = 0.0f;
 	spotCutoff = 180.0f;
 
-	spotDirection = new GLfloat[4]{0.0,0.0,1.0};
+	spotDirection = new GLfloat[4]{0.0f,0.0f,1.0f};
 
-	constantAttenuation = 1.0;
-	linearAttenuation = 0.0;
-	quadraticAttenuation = 0.0;
-}
-
-LightObject::LightObject(){
-	lightId = GL_LIGHT0;
-
-	// Set lighting intensity and color
-	qaAmbientLight = new GLfloat[4]{0.2, 0.2, 0.2, 1.0};
-	qaDiffuseLight = new GLfloat[4]{0.8, 0.8, 0.8, 1.0};
-	qaSpecularLight = new GLfloat[4]{1.0, 1.0, 1.0, 1.0};
-	// Light source position
-	qaLightPosition    = new GLfloat[4]{0.5, 5.0, 3.5, 0.5};
-
-	spotExponent = 0.0;
-	spotCutoff = 180.0f;
-
-	spotDirection = new GLfloat[4]{-3.0,0.0,1.0};
-
-	constantAttenuation = 1.0;
-	linearAttenuation = 0.0;
-	quadraticAttenuation = 0.0;
+	constantAttenuation = 1.0f;
+	linearAttenuation = 0.0f;
+	quadraticAttenuation = 0.0f;
 }
 
 /**
  * Enables The light of an Object
  */
 void LightObject::enableLight() {
-    // Enable lighting
+    // Disabling lighting
 	glDisable(GL_LIGHTING);
      glEnable(this->lightId);
 		glLightfv( lightId, GL_AMBIENT, this->qaAmbientLight);
@@ -78,6 +59,17 @@ void LightObject::enableLight() {
  */
 void LightObject::disableLight() {
     glDisable(this->lightId);
+}
+
+void LightObject::setLightPos(float x_pos, float y_pos, float z_pos) {
+	this->disableLight();
+	this->qaLightPosition    = new GLfloat[4]{x_pos, y_pos, z_pos, 1.0};
+	//this->spotDirection  = new GLfloat[3]{x_pos,y_pos,z_pos};
+}
+
+void LightObject::setSpotDirection(float x_pos, float y_pos, float z_pos) {
+	this->disableLight();
+	this->spotDirection  = new GLfloat[3]{x_pos,y_pos,z_pos};
 }
 
 LightObject::~LightObject() {

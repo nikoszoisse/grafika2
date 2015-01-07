@@ -21,6 +21,12 @@ Object::Object(float x,float y,float z) {
 
 	shininess = 0.0;
 }
+
+void Object::setObjPos(float x_pos, float y_pos, float z_pos) {
+	this->x_point = x_pos;
+	this->y_point = y_pos;
+	this->z_point = z_pos;
+}
 /**
  * Apply MAterial to an Object with default values
  */
