@@ -11,12 +11,13 @@
  * Creates an Object Token
  */
 Token::Token(float x,float y,float z,float radius)
-		:Object(x,y,z),LightObject(x,y,z){
+		:Object(x,y,z),LightObject(x,y,z+5){
 	this->radius = radius;
 	this->color = new GLfloat[4]{1.0, 0, 0, 1};
-	this->quadraticAttenuation = 0.50f;
-	this->spotExponent = 128.0f;
-	this->setSpotDirection(x,y+100,z+100);
+	this->quadraticAttenuation = 0.2f;
+	this->spotExponent = 0.0f;
+	this->spotCutoff = 180.0f;
+	this->setSpotDirection(1,0,0);
 }
 
 Token::~Token() {
@@ -40,20 +41,4 @@ void Token::view(){
 void Token::setPosition(float x,float y,float z){
 	this->setObjPos(x,y,z);
 	this->setLightPos(x,y,z-radius/2);
-}
-
-void Token::set_range_cons(){
-	this->constantAttenuation -= 0.10f;
-}
-void Token::set_range_qua(){
-	this->quadraticAttenuation += 0.05f;
-}
-void Token::set_range_lin(){
-	this->linearAttenuation +=0.05f;
-}
-
-void Token::reset_range(){
-	this->constantAttenuation = 1.0f;
-	this->linearAttenuation = 0.0f;
-	this->quadraticAttenuation = 0.0f;
 }

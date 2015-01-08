@@ -28,7 +28,7 @@ LightObject::LightObject(float x_pos,float y_pos,float z_pos) {
 
 	spotExponent = 0.0f;
 	spotCutoff = 180.0f;
-
+	//dirVector0 	spotDirection = new GLfloat[4]{0.0, 0.0, 1.0, 0.0};
 	spotDirection = new GLfloat[4]{0.0f,0.0f,1.0f,0.0f};
 
 	constantAttenuation = 1.0f;
@@ -71,7 +71,7 @@ void LightObject::setLightPos(float x_pos, float y_pos, float z_pos) {
 
 void LightObject::setSpotDirection(float x_pos, float y_pos, float z_pos) {
 	this->disableLight();
-	this->spotDirection  = new GLfloat[4]{x_pos,y_pos,z_pos,0.0f};
+	this->spotDirection  = new GLfloat[4]{x_pos,y_pos,z_pos,0.0};
 }
 
 LightObject::~LightObject() {

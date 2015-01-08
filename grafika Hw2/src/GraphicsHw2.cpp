@@ -81,12 +81,13 @@ using namespace std;
 	             case 'a' : side_deltaMove = char_step; break;
 	             case 'd' : side_deltaMove = -char_step; break;
 	             //TODO remove z, is for testing light Position
-	             case 'z' : sun->setPosition(1.0f,64.0f,65.0f);break;
+	             case 'z' : sun->setPosition(1.0f,3.0f,130.0f);break;
 	             case 'x' : sun->setPosition(1.0f,1.0f,65.0f);break;
 	             //Hide the sun
 	             case 'c' : sun_to_view = !sun_to_view;sun->hide();break;
-	             case 'l' : tokens.push_back(new Token(player->getXPos(),player->getYPos()+2,player->getZPos(),0.3));break;
+	             case 'l' : tokens.push_back(new Token(player->getXPos(),player->getYPos()+1,player->getZPos(),0.3));break;
 	       }
+           glutPostRedisplay();
 	}
 
 	void releaseKey(unsigned char key, int xx, int yy) {
@@ -111,6 +112,7 @@ using namespace std;
 			lx = sin(xangle + xdeltaAngle);
 			ly = sin(yangle + ydeltaAngle);
 			lz = cos(xangle + xdeltaAngle);
+			glutPostRedisplay();
 		}
 	}
 
@@ -268,7 +270,7 @@ using namespace std;
 		glutDisplayFunc(renderScene);
 		glutReshapeFunc(reshapeScene);
 		//redraw continuously
-		glutIdleFunc(renderScene);
+		//glutIdleFunc(renderScene);
 
 		glutMainLoop();
 

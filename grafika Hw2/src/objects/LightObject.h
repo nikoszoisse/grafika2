@@ -21,7 +21,6 @@ private:
 	// Light source position
 	GLfloat *qaLightPosition;
 
-	GLfloat *spotDirection;
 protected:
 
 	// Set lighting intensity and color
@@ -33,6 +32,7 @@ protected:
 	GLfloat  constantAttenuation;
 	GLfloat  linearAttenuation;
 	GLfloat  quadraticAttenuation;
+	GLfloat *spotDirection;
 
 	LightObject(float,float,float);
 	void enableLight();

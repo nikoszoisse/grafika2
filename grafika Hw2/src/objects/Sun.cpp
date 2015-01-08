@@ -25,7 +25,7 @@ void Sun::view(){
 	glPushMatrix();
 	glTranslatef(x_point,y_point,z_point);
 	glColor4f(color[0],color[1], color[2],color[3]);
-	this->applyMaterial(color,color,color,100);
+	this->applyMaterial(color,color,color,20);
     glutSolidSphere(radius,20,20);
     glPopMatrix();
     //We wont anable it for other items not sun
