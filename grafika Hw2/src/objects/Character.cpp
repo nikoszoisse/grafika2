@@ -16,8 +16,9 @@ Character::Character(float x_pos,float y_pos,float z_pos):
 void Character::view() {
 	glPushMatrix();
 		glRotatef(1.0,x_point,y_point,z_point);
+		glTranslatef(x_point,y_point,z_point);
 		GLfloat *color = new GLfloat[4]{1.0,0.5,0.0,1.0};
-		this->applyMaterial(color,color,color,50);
+		this->applyMaterial(color,color,color,new GLfloat[4]{1.0,0.5,0.0,0.5},50);
 	    glutSolidSphere(0.5,20,20);
 		//RENDERING legs klp
 	glPopMatrix();

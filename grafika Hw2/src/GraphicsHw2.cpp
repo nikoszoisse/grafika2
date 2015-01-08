@@ -34,7 +34,7 @@ using namespace std;
 	vector<Token*> tokens;
 	float sizeOfCube=1;
 
-	bool sun_to_view = false;
+	bool sun_to_view = true;
 
 
 	// the key states. These variables will be zero
@@ -46,12 +46,13 @@ using namespace std;
 	int xOrigin = -1;
 	int yOrigin = -1;
 
-	//Camera's Eye Position
-	float x_cam = start_x,
-			y_cam = start_y,
-			z_cam = start_z-2; // se it like 3rd person
+
 	// actual vector representing the camera's direction
 	float lx=0.0f,ly=0.0f,lz=1.0f;
+	//Camera's Eye Position
+	float x_cam = start_x+lx,
+			y_cam = start_y+ly,
+			z_cam = start_z+lz; // se it like 3rd person
 	// angle of rotation for the camera direction
 	float xangle = 0.0f;
 	float yangle = 0.0f;
@@ -84,7 +85,7 @@ using namespace std;
 	             case 'x' : sun->setPosition(1.0f,1.0f,65.0f);break;
 	             //Hide the sun
 	             case 'c' : sun_to_view = !sun_to_view;sun->hide();break;
-	             //case 'l' : tokens.push_back(new Token(x+lx,2,z+lz,0.3));break;
+	             case 'l' : tokens.push_back(new Token(player->getXPos(),player->getYPos()+2,player->getZPos(),0.3));break;
 	       }
 	}
 
@@ -186,7 +187,7 @@ using namespace std;
 		x_cam = player->getXPos();
 		y_cam = player->getYPos();
 		z_cam = player->getZPos();
-		gluLookAt(	x_cam, y_cam, z_cam-2,
+		gluLookAt(	x_cam, y_cam+2, z_cam-3,
 				x_cam+lx, y_cam+ly,  z_cam+lz,
 				0.0f, 1.0f,  0.0f);
 
