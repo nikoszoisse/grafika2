@@ -13,9 +13,6 @@
 
 class Character: public Object{
 private:
-	float x_pos;
-	float y_pos;
-	float z_pos;
 	float x_target,y_target,z_target;
 	bool on_move;
 	int dir_z; /*1,-1*/
