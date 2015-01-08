@@ -34,13 +34,8 @@ using namespace std;
 	vector<Token*> tokens;
 	float sizeOfCube=1;
 
-	// angle of rotation for the camera direction
-	float xangle = 0.0f;
-	float yangle = 0.0f;
-
 	bool sun_to_view = false;
-	// actual vector representing the camera's direction
-	float lx=0.0f,ly=0.0f,lz=1.0f;
+
 
 	// the key states. These variables will be zero
 	//when no key is being presses
@@ -51,13 +46,24 @@ using namespace std;
 	int xOrigin = -1;
 	int yOrigin = -1;
 
+	//Camera's Eye Position
+	float x_cam = start_x,
+			y_cam = start_y,
+			z_cam = start_z-2; // se it like 3rd person
+	// actual vector representing the camera's direction
+	float lx=0.0f,ly=0.0f,lz=1.0f;
+	// angle of rotation for the camera direction
+	float xangle = 0.0f;
+	float yangle = 0.0f;
+
 	void computePos() {
 		/*These VAlues depended from camera, we dont
 		x += deltaMove * lx * 0.1f;
 		z += deltaMove * lz * 0.1f;
 		*/
-	//	x += side_deltaMove * 0.3f;
-	//	z += fwd_deltaMove * 0.3f;
+		player->setPosition(player->getXPos()+side_deltaMove,
+				player->getYPos()
+				,player->getZPos()+fwd_deltaMove);
 	}
 
 	void processNormalKeys(unsigned char key, int xx, int yy) {
@@ -69,10 +75,10 @@ using namespace std;
 	void pressKey(unsigned char key, int xx, int yy) {
 
 	       switch (key) {
-	             case 'w' : fwd_deltaMove = 0.5f; break;
-	             case 's' : fwd_deltaMove = -0.5f; break;
-	             case 'a' : side_deltaMove = 0.5f; break;
-	             case 'd' : side_deltaMove = -0.5f; break;
+	             case 'w' : fwd_deltaMove = char_step; break;
+	             case 's' : fwd_deltaMove = -char_step; break;
+	             case 'a' : side_deltaMove = char_step; break;
+	             case 'd' : side_deltaMove = -char_step; break;
 	             //TODO remove z, is for testing light Position
 	             case 'z' : sun->setPosition(1.0f,64.0f,65.0f);break;
 	             case 'x' : sun->setPosition(1.0f,1.0f,65.0f);break;
@@ -94,14 +100,13 @@ using namespace std;
 
 	void mouseMove(int mx, int my) {
 
-		// this will only be true when the left button is down
-		if (xOrigin >= 0) {
-
+		// this will only be true when the middle button is down
+		if(xOrigin>=0 || yOrigin>=0){
 			// update deltaAngle
 			xdeltaAngle = (mx - xOrigin) * 0.001f;
 			ydeltaAngle = (my- yOrigin) * 0.001f;
 
-			// update camera's direction  (EYE)
+			// update camera's direction  (EYE) looks at camera center point
 			lx = sin(xangle + xdeltaAngle);
 			ly = sin(yangle + ydeltaAngle);
 			lz = cos(xangle + xdeltaAngle);
@@ -109,18 +114,15 @@ using namespace std;
 	}
 
 	void mouseButton(int button, int state, int mx, int my) {
-
-		// only start motion if the left button is pressed
-		if (button == GLUT_LEFT_BUTTON) {
-
-			// when the button is released
-			if (state == GLUT_UP) {
-				xangle += xdeltaAngle;
-				xOrigin = -1.0f;
-				yangle += ydeltaAngle;
-				yOrigin = -1.0f;
+		//TODO REMOVE LEFT
+		if(button == GLUT_MIDDLE_BUTTON || button == GLUT_LEFT){
+			if(state == GLUT_UP){
+			xangle += xdeltaAngle;
+			yangle += ydeltaAngle;
+			yOrigin = -1;
+			xOrigin = -1;
 			}
-			else  {// state = GLUT_DOWN
+			else{
 				xOrigin = mx;
 				yOrigin = my;
 			}
@@ -129,19 +131,6 @@ using namespace std;
 
 	void createField(){
 		bool center=false;
-		/*for(int i=0;i<grid_size;i++){
-			for(int j=0;j<grid_size;j++){
-				if(i==grid_size/2&&j==grid_size/2){
-					center=true;
-					cubes.push_back(new Cube(sizeOfCube,-i*(sizeOfCube+0.01),0,-j*sizeOfCube,center));
-				}
-				else{
-					center=false;
-					cubes.push_back(new Cube(sizeOfCube,-i*(sizeOfCube+0.01),0,-j*sizeOfCube,center));
-				}
-			}
-		}*/
-
 		for(int i=0;i<=grid_size;i++){
 					for(int j=0;j<=grid_size;j++){
 						Cube* tmp;
@@ -192,16 +181,20 @@ using namespace std;
 
 		//Reset transformations
 		glLoadIdentity();
-		glTranslatef(.0, .0, -5);
+
 		// Set the camera
-		gluLookAt(	5, 1, 5,
-				5+lx, 1+ly,  5+lz,
+		x_cam = player->getXPos();
+		y_cam = player->getYPos();
+		z_cam = player->getZPos();
+		gluLookAt(	x_cam, y_cam, z_cam-2,
+				x_cam+lx, y_cam+ly,  z_cam+lz,
 				0.0f, 1.0f,  0.0f);
 
 		if(sun_to_view){
 			sun->view();
 		}
-		//TODO remove them Is for Testing
+
+		/*//TODO remove them Is for Testing
 		glLineWidth(5);
 		//X
 		glPushMatrix();
@@ -224,7 +217,9 @@ using namespace std;
 		  glVertex3f(0.0f, 0.0f, -32.0f);
 		  glVertex3f(0.0f, 0.0f, 32.0f);
 		glEnd();
+		 */
 
+		//PLAyer view
 		player->view();
 
 		// Draw the TOkens
