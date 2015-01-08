@@ -314,6 +314,9 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.1383262906.1178806838" name="GraphicsHw2.cpp" rcbsApplicability="disable" resourcePath="src/GraphicsHw2.cpp" toolsToInvoke="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.560589415.820900997">
+						<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.560589415.820900997" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.560589415"/>
+					</fileInfo>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings">

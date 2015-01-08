@@ -16,10 +16,9 @@ Cube::Cube(float size,float distX,float distY,float distZ,bool center): Object(d
 	this->y=size/2+distY;
 	this->z=size/2+distZ;
 	this->field_center =center;
-	setColor();
 }
 
-void Cube::setColor(){
+void Cube::setRandomColor(){
 	if(field_center==true){
 		color[0]=1.0;
 		color[2]=1.0;

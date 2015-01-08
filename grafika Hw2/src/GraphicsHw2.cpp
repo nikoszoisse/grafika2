@@ -18,10 +18,16 @@
 #include "./objects/Token.h"
 
 #define grid_size 64
+#define char_step 1.0
+#define move_anim_frame 0.1
+#define rotate_anim_frame 0.1
+#define start_x 32.5
+#define start_y 1.0
+#define start_z 32.5
 
 using namespace std;
 
-	//Character *player;
+	Character *player = new Character(start_x,start_y,start_z);
 	Sun *sun = new Sun(1,1,65,3);
 
 	vector<Cube*> cubes;
@@ -31,14 +37,10 @@ using namespace std;
 	// angle of rotation for the camera direction
 	float xangle = 0.0f;
 	float yangle = 0.0f;
+
 	bool sun_to_view = false;
 	// actual vector representing the camera's direction
-	//float lx=0.0f,lz=-1.0f;
 	float lx=0.0f,ly=0.0f,lz=1.0f;
-
-	// XZ position of the camera
-	//float x=-16.5f, z=-14.5f;
-	float x=32.0f, y=1.0f, z=32.0f;
 
 	// the key states. These variables will be zero
 	//when no key is being presses
@@ -54,8 +56,8 @@ using namespace std;
 		x += deltaMove * lx * 0.1f;
 		z += deltaMove * lz * 0.1f;
 		*/
-		x += side_deltaMove * 0.3f;
-		z += fwd_deltaMove * 0.3f;
+	//	x += side_deltaMove * 0.3f;
+	//	z += fwd_deltaMove * 0.3f;
 	}
 
 	void processNormalKeys(unsigned char key, int xx, int yy) {
@@ -76,8 +78,7 @@ using namespace std;
 	             case 'x' : sun->setPosition(1.0f,1.0f,65.0f);break;
 	             //Hide the sun
 	             case 'c' : sun_to_view = !sun_to_view;sun->hide();break;
-	             case 'v' : x = 0.0f;z=0.0f;break;
-	             case 'l' : cout << x<<", "<<z<<endl;tokens.push_back(new Token(x+lx,2,z+lz,0.3));break;
+	             //case 'l' : tokens.push_back(new Token(x+lx,2,z+lz,0.3));break;
 	       }
 	}
 
@@ -103,9 +104,7 @@ using namespace std;
 			// update camera's direction  (EYE)
 			lx = sin(xangle + xdeltaAngle);
 			ly = sin(yangle + ydeltaAngle);
-			lz = -cos(xangle + xdeltaAngle);
-
-			cout << x <<", "<< z <<endl;
+			lz = cos(xangle + xdeltaAngle);
 		}
 	}
 
@@ -145,14 +144,15 @@ using namespace std;
 
 		for(int i=0;i<=grid_size;i++){
 					for(int j=0;j<=grid_size;j++){
-						if(i==grid_size/2&&j==grid_size/2){
-							center=true;
-							cubes.push_back(new Cube(sizeOfCube,i*(sizeOfCube+0.01),0,j*(sizeOfCube+0.01),center));
-						}
-						else{
-							center=false;
-							cubes.push_back(new Cube(sizeOfCube,i*(sizeOfCube+0.01),0,j*sizeOfCube,center));
-						}
+						Cube* tmp;
+						if((i==grid_size/2&&j==grid_size/2))
+							center = true;
+						else
+							center = false;
+
+						tmp = new Cube(sizeOfCube,i*(sizeOfCube+0.01),0,j*(sizeOfCube+0.02),center);
+						tmp->setRandomColor();
+						cubes.push_back(tmp);
 					}
 				}
 
@@ -194,20 +194,24 @@ using namespace std;
 		glLoadIdentity();
 		glTranslatef(.0, .0, -5);
 		// Set the camera
-		gluLookAt(	x, y, z,
-				x+lx, y+ly,  z+lz,
+		gluLookAt(	5, 1, 5,
+				5+lx, 1+ly,  5+lz,
 				0.0f, 1.0f,  0.0f);
+
 		if(sun_to_view){
 			sun->view();
 		}
-		/*//TODO remove them Is for Testing
+		//TODO remove them Is for Testing
 		glLineWidth(5);
 		//X
+		glPushMatrix();
+		glRotatef(75.0,0.0,32,0);
 		glBegin(GL_LINES);
 			glColor4f(255,0,0,1.0);
 		  glVertex3f(-32.0f, 0.0f, 0.0f);
 		  glVertex3f(32.0f, 1.0f, 0.0f);
 		glEnd();
+		glPopMatrix();
 		//Y
 		glBegin(GL_LINES);
 			glColor4f(0,255,0,1.0);
@@ -219,7 +223,9 @@ using namespace std;
 			glColor4f(0,0,255,1.0);
 		  glVertex3f(0.0f, 0.0f, -32.0f);
 		  glVertex3f(0.0f, 0.0f, 32.0f);
-		glEnd();*/
+		glEnd();
+
+		player->view();
 
 		// Draw the TOkens
 		for (vector<Token*>::iterator it = tokens.begin() ; it != tokens.end(); ++it){
