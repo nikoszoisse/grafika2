@@ -15,7 +15,7 @@ class Cube: public Object {
 	private:
 	float size,distX,distY,distZ;
 	float x,y,z;
-	GLfloat color[4];
+	GLfloat *color;
 	bool field_center;
 	void createCube(float,float,float);
 public:
@@ -26,6 +26,7 @@ public:
 	float getX();
 	float getY();
 	float getZ();
+	float getWidth();
 	void setRandomColor();
 	void setColor(GLfloat*);
 	virtual ~Cube();

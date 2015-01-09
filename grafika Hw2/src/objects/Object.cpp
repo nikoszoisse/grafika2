@@ -21,7 +21,12 @@ Object::Object(float x,float y,float z) {
 
 	shininess = 0.0;
 }
-
+/**
+ * Set the Object Position
+ * @param x_pos
+ * @param y_pos
+ * @param z_pos
+ */
 void Object::setObjPos(float x_pos, float y_pos, float z_pos) {
 	this->x_point = x_pos;
 	this->y_point = y_pos;
@@ -68,6 +73,45 @@ void Object::applyMaterial(GLfloat *ambient_color,GLfloat *diffuse_color
 	this->emission_color = emission_color;
 
 	this->applyMaterial(ambient_color,diffuse_color,specular_color,shininess);
+}
+/**
+ * Returns an array (size 3) with coordinates of object
+ * @return float*
+ */
+float* Object::getObjPosition() {
+	return new float[3]{x_point,y_point,z_point};
+}
+
+float* Object::getTargetPosition() {
+	return new float[3]{x_target,y_target,z_target};
+}
+
+/**
+ * @param Object* target
+ * @return true if here is collision between this object(target coordinates) and the targeted object
+ *
+ */
+bool Object::hasCollision(Object* target) {
+		float vx,vy,vz;
+		float pos = target->getObjPosition();
+
+		//If the target is behind us for e.x we have transfrom the target's obj pos
+		if(pos[0] < this->x_target)
+			pos[0] -= this->getWidth();
+		if(pos[1] < this->y_target)
+			pos[1] -= this->getWidth();
+		if(pos[2] < this->z_target)
+			pos[2] -= this->getWidth();
+
+		vx = pos[0]- this->x_target;
+		vy = pos[0]- this->y_target;
+		vz = pos[0]- this->z_target;
+		float length = sqrt(vx^2 + vy^2 + vz^2);
+
+		if(length > (target->getWidth() + this->getWidth()))
+			return false;
+
+		return true;
 }
 
 Object::~Object() {

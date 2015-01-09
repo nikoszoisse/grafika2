@@ -19,6 +19,7 @@ public:
 	virtual ~Sun();
 	void view();
 	void setPosition(float,float,float);
+	float getWidth();
 	void hide();
 };
 

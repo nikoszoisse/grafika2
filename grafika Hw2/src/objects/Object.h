@@ -21,6 +21,7 @@ protected:
 	 *   The emission colour is generally black for objects that do not shine by their own light.
 	 */
 	float x_point,y_point,z_point;
+	float x_target,y_target,z_target;
 
 	void applyMaterial();
 	void applyMaterial(GLfloat*,GLfloat*,GLfloat*,GLfloat);
@@ -42,6 +43,10 @@ public:
 	Object(float,float,float);
 	virtual void view()=0;
 	virtual void setPosition(float,float,float)=0;
+	float* getObjPosition();
+	float* getTargetPosition();
+	virtual float getWidth()=0;
+	bool hasCollision(Object*);
 	virtual ~Object();
 };
 

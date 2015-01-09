@@ -19,6 +19,7 @@ public:
 	virtual ~Token();
 	void view();
 	void setPosition(float,float,float);
+	float getWidth();
 };
 
 #endif /* Token_H_ */

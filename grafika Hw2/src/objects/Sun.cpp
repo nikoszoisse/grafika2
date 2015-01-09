@@ -37,6 +37,10 @@ void Sun::setPosition(float x,float y,float z){
 	this->setLightPos(x,y,z-radius/2);
 }
 
+float Sun::getWidth() {
+	return this->radius*2;
+}
+
 void Sun::hide(){
 	this->disableLight();
 }

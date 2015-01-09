@@ -19,29 +19,29 @@ Cube::Cube(float size,float distX,float distY,float distZ,bool center): Object(d
 }
 
 void Cube::setRandomColor(){
+	float r,g,b;
 	if(field_center==true){
-		color[0]=1.0;
-		color[2]=1.0;
+		r=1.0;
+		b=1.0;
 	}
 	else{
 		int number=rand()%4;
 		if(number==0){
-			color[0]=1.0;
+			r=1.0;
 		}
 		else if(number==1){
-			color[2]=1.0;
+			b=1.0;
 		}
 		else if(number==2){
-			color[1]=1.0;
+			g=1.0;
 		}
 		else
 		{
-			color[0]=1.0;
-			color[1]=1.0;
+			r=1.0;
+			g=1.0;
 		}
 	}
-	//ALpa
-	color[3] = 1.0;
+	this->color = new GLfloat[4]{r,g,b,1.0};
 }
 
 void Cube::createCube(float distanceX,float distanceY,float distanceZ){
@@ -121,6 +121,15 @@ void Cube::view(){
 }
 
 void Cube::setPosition(float x, float y, float z) {
+	this->setObjPos(x,y,z);
+}
+
+float Cube::getWidth() {
+	return this->size;
+}
+
+void Cube::setColor(GLfloat* color) {
+	this->color = color;
 }
 
 Cube::~Cube() {
