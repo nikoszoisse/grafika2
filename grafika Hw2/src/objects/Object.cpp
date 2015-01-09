@@ -6,11 +6,16 @@
  */
 
 #include "Object.h"
+#include <math.h>
 
 Object::Object(float x,float y,float z) {
 	this->x_point = x;
 	this->y_point = y;
 	this->z_point = z;
+	this->x_target = x;
+	this->y_target = y;
+	this->z_target = z;
+
 	ambient_color = new GLfloat[4]{0.2, 0.2, 0.2, 1.0};
 	//to xrwma p diaxeetai
 	diffuse_color = new GLfloat[4]{0.8, 0.8, 0.8, 1.0};
@@ -93,7 +98,7 @@ float* Object::getTargetPosition() {
  */
 bool Object::hasCollision(Object* target) {
 		float vx,vy,vz;
-		float pos = target->getObjPosition();
+		float *pos = target->getObjPosition();
 
 		//If the target is behind us for e.x we have transfrom the target's obj pos
 		if(pos[0] < this->x_target)
@@ -106,12 +111,16 @@ bool Object::hasCollision(Object* target) {
 		vx = pos[0]- this->x_target;
 		vy = pos[0]- this->y_target;
 		vz = pos[0]- this->z_target;
-		float length = sqrt(vx^2 + vy^2 + vz^2);
+		float length = sqrt(vx*vx + vy*vy + vz*vz);
 
 		if(length > (target->getWidth() + this->getWidth()))
 			return false;
 
 		return true;
+}
+
+float Object::getWidth(){
+	return 0.0;
 }
 
 Object::~Object() {

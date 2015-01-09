@@ -44,8 +44,9 @@ public:
 	virtual void view()=0;
 	virtual void setPosition(float,float,float)=0;
 	float* getObjPosition();
+	//TODO Move to Animation
 	float* getTargetPosition();
-	virtual float getWidth()=0;
+	virtual float getWidth();
 	bool hasCollision(Object*);
 	virtual ~Object();
 };
