@@ -29,10 +29,12 @@ protected:
 	GLfloat *qaSpecularLight;
 	GLfloat  spotExponent;
 	GLfloat  spotCutoff;
+	//Eksasthenshsh fwtos 1/ athroisma attentuations
 	GLfloat  constantAttenuation;
 	GLfloat  linearAttenuation;
 	GLfloat  quadraticAttenuation;
-	GLfloat *spotDirection;
+
+	GLfloat *spotDirection;		//Normalized Vector
 
 	LightObject(float,float,float);
 	void enableLight();

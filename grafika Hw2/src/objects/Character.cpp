@@ -21,8 +21,7 @@ Character::Character(float x_pos,float y_pos,float z_pos):
 	this->target_rot_deg=0;
 	this->curr_rot_deg=0;
 	this->clock_rot = 1;
-	motion=1;
-
+	this->motion = 1.0;
 }
 
 void Character::view() {
@@ -37,10 +36,10 @@ void Character::view() {
 	if(on_rot){
 		on_move=false;
 		curr_rot_deg += rotate_anim_frame;
-		if(abs(target_rot_deg) == curr_rot_deg){
+		if(abs(target_rot_deg) <= curr_rot_deg){
 			on_rot=false;
-			on_move=true;
-			moveForward();
+			//on_move=true;
+			//moveForward();
 		}
 	}
 	glPushMatrix();
@@ -57,7 +56,7 @@ void Character::view() {
 void Character::renderCharHead(){
 	glPushMatrix();
 		GLfloat *color = new GLfloat[4]{1.0,0.0,0.0,1.0};
-		this->applyMaterial(color,color,color,new GLfloat[4]{1.0,0.0,0.0,0.5},50);
+		this->applyMaterial(color,color,color,50);
 		glTranslatef(0,0.8,0);
 		glutSolidSphere(0.15,10,10);
 	glPopMatrix();
@@ -66,7 +65,7 @@ void Character::renderCharHead(){
 void Character::renderCharBody(){
 	glPushMatrix();
 		GLfloat *color = new GLfloat[4]{0.0,0.0,1.0,1.0};
-		this->applyMaterial(color,color,color,new GLfloat[4]{0.0,0.0,1.0,0.5},50);
+		this->applyMaterial(color,color,color,50);
 		glTranslatef(0,0.5,0);
 		glutSolidCube(0.3);
 	glPopMatrix();
@@ -126,16 +125,19 @@ void Character::renderCharLegs(){
 }
 
 void Character::moveForward(){
-	z_target = z_point+char_step*dir_z;
-	x_target = x_point+char_step*dir_x;
-	y_target = y_point+char_step*dir_y;
+	if(on_move)
+		return;
+
+	z_target = z_point+(char_step+gap_size*sizeOfCube)*dir_z;
+	x_target = x_point+(char_step+gap_size*sizeOfCube)*dir_x;
+	y_target = y_point+(char_step+gap_size*sizeOfCube)*dir_y;
 
 
 	on_move=true;
 }
 
 void Character::moveBackWard(){
-	if(on_rot)
+	if(on_rot || on_move)
 		return;
 
 	if(dir_z){
@@ -153,11 +155,11 @@ void Character::moveBackWard(){
 	this->target_rot_deg = 180+curr_rot_deg;
 	this->clock_rot = dir_x + dir_z;
 
-	moveForward();
+	//moveForward();
 }
 
 void Character::moveLeft(){
-	if(on_rot)
+	if(on_rot || on_move)
 		return;
 	if(dir_z){
 		dir_x= dir_z;
@@ -172,12 +174,13 @@ void Character::moveLeft(){
 	clock_rot = 1;
 	target_rot_deg=90+curr_rot_deg;
 	//this->clock_rot = dir_x + dir_z;
-	moveForward();
+	//moveForward();
 }
 
 void Character::moveRight(){
-	if(on_rot)
+	if(on_rot || on_move)
 		return;
+
 	if(dir_z){
 		dir_x = -1*dir_z;
 		dir_z = 0;
@@ -190,7 +193,7 @@ void Character::moveRight(){
 	on_rot = true;
 	clock_rot = -1;
 	target_rot_deg=90+curr_rot_deg;
-	moveForward();
+	//moveForward();
 }
 
 void Character::checkIfFinished(){
@@ -213,6 +216,10 @@ float Character::getYPos() {
 	return y_point;
 }
 
+void Character::stopMoving() {
+	on_move = false;
+}
+
 float Character::getZPos() {
 	return z_point;
 }
@@ -223,7 +230,7 @@ bool Character::isMoving(){
 }
 
 float Character::getWidth(){
-	return 1;
+	return 0.5;
 }
 
 Character::~Character() {

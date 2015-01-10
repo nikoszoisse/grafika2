@@ -6,8 +6,9 @@
  */
 
 #include "Object.h"
+#include <iostream>
 #include <math.h>
-
+using namespace std;
 Object::Object(float x,float y,float z) {
 	this->x_point = x;
 	this->y_point = y;
@@ -22,8 +23,9 @@ Object::Object(float x,float y,float z) {
 	//GUalada se korufes p.x
 	specular_color = new GLfloat[4]{0.0, 0.0, 0.0, 1.0};
 	//To Xrwma pou ekpempei
-	emission_color = new GLfloat[4]{0.0, 0.0, 0.0, 1.0};
+	emission_color = new GLfloat[4]{0.0, 0.0, 0.0, 0.5};
 
+	//shinness of specular
 	shininess = 0.0;
 }
 /**
@@ -99,22 +101,28 @@ float* Object::getTargetPosition() {
 bool Object::hasCollision(Object* target) {
 		float vx,vy,vz;
 		float *pos = target->getObjPosition();
-
 		//If the target is behind us for e.x we have transfrom the target's obj pos
-		if(pos[0] < this->x_target)
-			pos[0] -= this->getWidth();
-		if(pos[1] < this->y_target)
-			pos[1] -= this->getWidth();
-		if(pos[2] < this->z_target)
-			pos[2] -= this->getWidth();
+		if(dir_x*pos[0] < -dir_x*this->x_target){
+			pos[0] = pos[0] +dir_x*this->getWidth()+2*dir_x*sizeOfCube*gap_size;
+		}
+		if(dir_y*pos[1] < dir_y*this->y_target)
+			pos[1] = pos[1] + dir_y*this->getWidth()+2*sizeOfCube*gap_size;
+		if(dir_z*pos[2] < dir_z*this->z_target)
+			pos[2] = pos[2]+ dir_z*this->getWidth()+2*dir_z*sizeOfCube*gap_size;
+
+
 
 		vx = pos[0]- this->x_target;
-		vy = pos[0]- this->y_target;
-		vz = pos[0]- this->z_target;
-		float length = sqrt(vx*vx + vy*vy + vz*vz);
+		vy = pos[1]- this->y_target;
+		vz = pos[2]- this->z_target;
 
-		if(length > (target->getWidth() + this->getWidth()))
+		float length_between_points = sqrt(vx*vx + vy*vy + vz*vz);
+		length_between_points = fabs(length_between_points - this->getWidth() + sizeOfCube*gap_size);
+
+		float gap_between_objs = fabs(target->getWidth() - this->getWidth());
+		if(length_between_points > gap_between_objs){
 			return false;
+		}
 
 		return true;
 }

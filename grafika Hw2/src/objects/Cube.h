@@ -9,7 +9,7 @@
 #define CUBE_H_
 
 #include "Object.h"
-
+#include "settings.h"
 
 class Cube: public Object {
 	private:

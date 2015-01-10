@@ -14,15 +14,13 @@
 class Character: public Object{
 private:
 	//TODO Move to Animation
-	int motion;
 	bool on_move;
 	bool on_rot;
-	int dir_z; /*1,-1*/
-	int dir_x;
-	int dir_y;
+
 	float target_rot_deg; /*movefowarrd:0,movrelft,right 90,270, move_back: 180*/
 	float curr_rot_deg; /*Where  to start rotatiing Default =0*/
 	float clock_rot;
+	float motion;
 	void checkIfFinished();
 public:
 	Character(float,float,float);
@@ -38,6 +36,7 @@ public:
 	void moveBackWard(); /*ROtates/ ,Update dir z and call moveFoward*/
 	void moveLeft();	/*Rotate update dir x and call movefoward*/
 	void moveRight();	/**/
+	void stopMoving();
 	float getWidth();
 	virtual ~Character();
 	float getXPos();

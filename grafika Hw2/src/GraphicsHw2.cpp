@@ -40,12 +40,65 @@ using namespace std;
 	// actual vector representing the camera's direction
 	float lx=0.0f,ly=0.0f,lz=1.0f;
 	//Camera's Eye Position
-	float x_cam = start_x+lx,
-			y_cam = start_y+ly,
-			z_cam = start_z+lz; // se it like 3rd person
+	float x_eye = start_x+lx,
+			y_eye = start_y+ly,
+			z_eye = start_z+lz; // se it like 3rd person
+	float x_center = x_eye,
+			y_center = y_eye,
+			z_center = z_eye;
 	// angle of rotation for the camera direction
 	float xangle = 0.0f;
 	float yangle = 0.0f;
+
+	int v_Key_pressed_times = 0;
+
+	void hasCollusion(string collusion){
+		if(collusion == "z"){
+			int player_y = player->getYPos();
+			for (vector<Cube*>::iterator it = cubes[player_y].begin() ; it != cubes[player_y].end(); ++it){
+				if(player->hasCollision(*it)){
+					player->stopMoving();
+				}
+			}
+		}
+	}
+
+	void handleCameraView(){
+		if(v_Key_pressed_times%5 == 0){
+			v_Key_pressed_times = 0;
+			// Set the camera
+			x_eye = player->getXPos();
+			y_eye = player->getYPos()+2;
+			z_eye = player->getZPos()-2;
+
+			x_center = x_eye;
+			y_center = y_eye-1;
+			z_center = z_eye;
+		}else{
+			x_center = grid_size/2;
+			y_center = 1;
+			z_center = grid_size/2;
+		}
+
+		if(v_Key_pressed_times == 1){
+			x_eye = 1;
+			y_eye = grid_size/2+1;
+			z_eye = 1;
+		}
+		else if(v_Key_pressed_times == 2){
+			x_eye = 1;
+			y_eye = grid_size/2+1;
+			z_eye = grid_size;
+		}else if(v_Key_pressed_times == 3){
+			x_eye = grid_size;
+			y_eye = grid_size/2+1;
+			z_eye = 1;
+		}else if(v_Key_pressed_times == 4){
+			x_eye = grid_size;
+			y_eye = grid_size/2+1;
+			z_eye = grid_size;
+		}
+	}
 
 	void processNormalKeys(unsigned char key, int xx, int yy) {
 
@@ -56,16 +109,18 @@ using namespace std;
 	void pressKey(unsigned char key, int xx, int yy) {
 
 	       switch (key) {
-	             case 'w' : player->moveForward(); break;
-	             case 's' : player->moveBackWard(); break;
-	             case 'a' : player->moveLeft(); break;
-	             case 'd' : player->moveRight(); break;
+	             case 'w' : player->moveForward();hasCollusion("z"); break;
+	             case 's' : player->moveBackWard();player->moveForward();hasCollusion("z");break;
+	             case 'a' : player->moveLeft(); player->moveForward(); hasCollusion("z");break;
+	             case 'd' : player->moveRight(); player->moveForward();hasCollusion("z");break;
+	             case 'v' : v_Key_pressed_times++;break;
 	             //TODO remove z, is for testing light Position
 	             case 'z' : sun->setPosition(1.0f,3.0f,130.0f);break;
 	             case 'x' : sun->setPosition(1.0f,1.0f,65.0f);break;
 	             //Hide the sun
 	             case 'c' : sun_to_view = !sun_to_view;sun->hide();break;
-	             case 'l' : tokens.push_back(new Token(player->getXPos(),player->getYPos()+1,player->getZPos(),0.3));break;
+	             case 'l' : tokens.push_back(new Token(player->getXPos(),
+	            		 player->getYPos(),player->getZPos(),token_size_rad));break;
 	       }
           // glutPostRedisplay();
 	}
@@ -117,12 +172,18 @@ using namespace std;
 		for(int i=0;i<=grid_size;i++){
 					for(int j=0;j<=grid_size;j++){
 						Cube* tmp;
-						if((i==grid_size/2&&j==grid_size/2))
+						if((i==grid_size/2&&j==grid_size/2)){
+							tmp = new Cube(sizeOfCube,i*(sizeOfCube+gap_size),1,(j+1)*(sizeOfCube+gap_size),center);
+							tmp->setRandomColor();
+							cubes[1].push_back(tmp);
 							center = true;
-						else
+						}
+						else{
 							center = false;
+						}
 
 						tmp = new Cube(sizeOfCube,i*(sizeOfCube+gap_size),0,j*(sizeOfCube+gap_size),center);
+						//tmp = new Cube(sizeOfCube,(i+gap_size)*sizeOfCube,0,(j+gap_size)*sizeOfCube,center);
 						tmp->setRandomColor();
 						cubes[grid_floor].push_back(tmp);
 					}
@@ -162,18 +223,16 @@ using namespace std;
 		//Reset transformations
 		glLoadIdentity();
 
-		// Set the camera
-		x_cam = player->getXPos();
-		y_cam = player->getYPos();
-		z_cam = player->getZPos();
-
-		gluLookAt(	x_cam, y_cam+2, z_cam-2,
-				x_cam+lx, y_cam+ly,  z_cam+lz,
+		//Set Camera
+		handleCameraView();
+		gluLookAt(	x_eye, y_eye, z_eye,
+				x_center+lx, y_center+ly,  z_center+lz,
 				0.0f, 1.0f,  0.0f);
 
 		if(sun_to_view){
 			sun->view();
 		}
+
 		//PLAyer view
 		player->view();
 
@@ -186,7 +245,10 @@ using namespace std;
 		for (vector<Cube*>::iterator it = cubes[grid_floor].begin() ; it != cubes[grid_floor].end(); ++it){
 			(*it)->view();
 		}
-
+		// Draw the GROUND
+		for (vector<Cube*>::iterator it = cubes[1].begin() ; it != cubes[1].end(); ++it){
+			(*it)->view();
+		}
 
 		glutSwapBuffers();
 	}

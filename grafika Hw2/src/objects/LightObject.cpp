@@ -16,7 +16,8 @@
 LightObject::LightObject(float x_pos,float y_pos,float z_pos) {
 
 	lightId = GL_LIGHT0 +num_of_lights;
-	num_of_lights++;
+	if(num_of_lights < 8)
+		num_of_lights++;
 
 	// Set lighting intensity and color
 	qaAmbientLight = new GLfloat[4]{0.2, 0.2, 0.2, 1.0};
@@ -74,6 +75,6 @@ void LightObject::setSpotDirection(float x_pos, float y_pos, float z_pos) {
 }
 
 LightObject::~LightObject() {
-	// TODO Auto-generated destructor stub
+	num_of_lights = this->lightId - 1;
 }
 

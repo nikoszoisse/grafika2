@@ -12,6 +12,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
+#include "settings.h"
 
 class Object {
 protected:
@@ -22,6 +23,9 @@ protected:
 	 */
 	float x_point,y_point,z_point;
 	float x_target,y_target,z_target;
+	float dir_z; /*1,-1*/
+	float dir_x;
+	float dir_y;
 
 	void applyMaterial();
 	void applyMaterial(GLfloat*,GLfloat*,GLfloat*,GLfloat);

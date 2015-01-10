@@ -314,10 +314,12 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.1383262906.1876779425" name="Character.cpp" rcbsApplicability="disable" resourcePath="src/objects/Character.cpp" toolsToInvoke="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.560589415.1849276234">
-						<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.560589415.1849276234" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.560589415"/>
+					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.1383262906.703295766" name="Object.cpp" rcbsApplicability="disable" resourcePath="src/objects/Object.cpp" toolsToInvoke="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.560589415.532882739">
+						<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.560589415.532882739" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.560589415"/>
 					</fileInfo>
+					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.1383262906.923368388" name="Object.h" rcbsApplicability="disable" resourcePath="src/objects/Object.h" toolsToInvoke=""/>
 					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.1383262906.830052701" name="settings.h" rcbsApplicability="disable" resourcePath="src/objects/settings.h" toolsToInvoke=""/>
+					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.1383262906.1470857145" name="Character.h" rcbsApplicability="disable" resourcePath="src/objects/Character.h" toolsToInvoke=""/>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings">
