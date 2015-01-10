@@ -14,6 +14,7 @@
 class Character: public Object{
 private:
 	//TODO Move to Animation
+	int motion;
 	bool on_move;
 	bool on_rot;
 	int dir_z; /*1,-1*/
