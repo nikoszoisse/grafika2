@@ -16,7 +16,6 @@
 LightObject::LightObject(float x_pos,float y_pos,float z_pos) {
 
 	lightId = GL_LIGHT0 +num_of_lights;
-	cout << "Num "<< num_of_lights<<endl;
 	num_of_lights++;
 
 	// Set lighting intensity and color

@@ -9,7 +9,7 @@
 #define CHARACTER_H_
 
 #include "Object.h"
-
+#include "settings.h"
 
 class Character: public Object{
 private:
@@ -19,7 +19,9 @@ private:
 	int dir_z; /*1,-1*/
 	int dir_x;
 	int dir_y;
-	float rot_deg; /*movefowarrd:0,movrelft,right 90,270, move_back: 180*/
+	float target_rot_deg; /*movefowarrd:0,movrelft,right 90,270, move_back: 180*/
+	float curr_rot_deg; /*Where  to start rotatiing Default =0*/
+	float clock_rot;
 	void checkIfFinished();
 public:
 	Character(float,float,float);

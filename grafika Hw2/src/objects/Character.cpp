@@ -7,6 +7,7 @@
 
 #include "Character.h"
 #include <iostream>
+#include <math.h>
 using namespace std;
 
 Character::Character(float x_pos,float y_pos,float z_pos):
@@ -17,32 +18,30 @@ Character::Character(float x_pos,float y_pos,float z_pos):
 	this->dir_x = 0;
 	this->dir_y = 0;
 	this->dir_z = 1;
-	this->rot_deg=0;
+	this->target_rot_deg=0;
+	this->curr_rot_deg=0;
+	this->clock_rot = 1;
 
 }
 
 void Character::view() {
-	int rot;
-	rot = 0;
 	this->checkIfFinished();
-
+	//Do Move animyion
 	if(on_move && !on_rot){
-		x_point += 0.01*x_target*dir_x;
-		y_point += 0.01*y_target*dir_y;
-		z_point += 0.01*z_target*dir_z;
+		x_point += move_anim_frame*dir_x;
+		y_point += move_anim_frame*dir_y;
 	}
-	//cout << z_point << " "<< y_point <<" "<< x_point<<endl;
-	if(on_rot && rot_deg){
-		rot = this->rot_deg - this->rot_deg-1;
-		this->rot_deg--;
-		if(rot_deg==0){
+	//Do Rotate Animation
+	if(on_rot){
+		curr_rot_deg += rotate_anim_frame;
+		if(abs(target_rot_deg) == curr_rot_deg){
 			on_rot=false;
 			moveForward();
 		}
 	}
 	glPushMatrix();
-		glRotatef(rot,0,1,0);
 		glTranslatef(x_point,y_point,z_point);
+		glRotatef(clock_rot*curr_rot_deg,0,1,0);
 		GLfloat *color = new GLfloat[4]{1.0,0.5,0.0,1.0};
 		this->applyMaterial(color,color,color,new GLfloat[4]{1.0,0.5,0.0,0.5},50);
 		renderCharBody();
@@ -54,7 +53,6 @@ void Character::view() {
 
 void Character::renderCharHead(){
 	glPushMatrix();
-		//glTranslatef(x_point,y_point,z_point);
 		glTranslatef(0,1,0);
 		glutSolidSphere(0.2,10,10);
 	glPopMatrix();
@@ -88,17 +86,18 @@ void Character::renderCharLegs(){
 }
 
 void Character::moveForward(){
-	z_target = z_point+1.0*dir_z;
-	x_target = x_point+1.0*dir_x;
-	y_target = y_point+1.0*dir_y;
+	z_target = z_point+char_step*dir_z;
+	x_target = x_point+char_step*dir_x;
+	y_target = y_point+char_step*dir_y;
+
+
 	on_move=true;
-	if(this->rot_deg == 0){
-		on_rot=false;
-	}
 }
 
 void Character::moveBackWard(){
-	z_target=this->getZPos()-1;
+	if(on_rot)
+		return;
+
 	if(dir_z){
 		dir_z *=(-1);
 		dir_x = 0;
@@ -109,48 +108,56 @@ void Character::moveBackWard(){
 	}
 
 	on_rot = true;
-	rot_deg=180;
+	//this->curr_rot_deg = 0*dir_z + curr_rot_deg*dir_x*dir_x;
+	//target_rot_deg= 180*dir_z + 180*dir_x + dir_x*curr_rot_deg + dir_z*curr_rot_deg;
+	this->target_rot_deg = 180+curr_rot_deg;
+	this->clock_rot = dir_x + dir_z;
+
 	moveForward();
 }
 
 void Character::moveLeft(){
-	x_target=this->getXPos()-1;
+	if(on_rot)
+		return;
 	if(dir_z){
-		dir_x=-1*dir_z;
+		dir_x= dir_z;
 		dir_z = 0;
 	}
 	else if(dir_x){
-		dir_z=dir_x;
+		dir_z=-1*dir_x;
 		dir_x = 0;
 	}
 
 	on_rot = true;
-	rot_deg=270;
+	clock_rot = 1;
+	target_rot_deg=90+curr_rot_deg;
+	//this->clock_rot = dir_x + dir_z;
 	moveForward();
 }
 
 void Character::moveRight(){
-	x_target=this->getXPos()+1;
-
+	if(on_rot)
+		return;
 	if(dir_z){
-		dir_x = dir_z;
+		dir_x = -1*dir_z;
 		dir_z = 0;
 	}
 	else if(dir_x){
-		dir_z = -1*dir_x;
+		dir_z = dir_x;
 		dir_x=0;
 	}
 
 	on_rot = true;
-	rot_deg=90;
+	clock_rot = -1;
+	target_rot_deg=90+curr_rot_deg;
 	moveForward();
 }
-void Character::checkIfFinished(){
-	if(x_point>=x_target&&y_point>=y_target&&
-			z_point>=z_target){
-		on_move=false;
 
-		rot_deg=0;
+void Character::checkIfFinished(){
+	if(fabs(dir_x*x_point-dir_x*x_target)<=0.1 && fabs(dir_y*y_point-dir_y*y_target)<=0.1 &&
+			(fabs(dir_z*z_point-dir_z*z_target)<=0.1) && !on_rot){
+		on_move=false;
+		target_rot_deg=0;
 	}
 }
 

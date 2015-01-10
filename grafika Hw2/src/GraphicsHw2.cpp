@@ -10,6 +10,7 @@
 #include <vector>
 #include <string>
 #include <math.h>
+#include "./objects/settings.h"
 #include "./objects/Object.h"
 #include "./objects/Cube.h"
 #include "./objects/Character.h"
@@ -17,22 +18,13 @@
 #include "./objects/Sun.h"
 #include "./objects/Token.h"
 
-#define grid_size 64
-#define char_step 1.0
-#define move_anim_frame 0.1
-#define rotate_anim_frame 0.1
-#define start_x 32.5
-#define start_y 1.0
-#define start_z 32.5
-
 using namespace std;
 
-	Character *player = new Character(start_x,start_y,start_z);
-	Sun *sun = new Sun(1,1,65,3);
+	Character *player = new Character(start_x, start_y, start_z);
+	Sun *sun = new Sun(sun_start_x, sun_start_y, sun_start_z, sun_size_rad);
 
-	vector<Cube*> cubes;
+	vector<Cube*> cubes[grid_size];
 	vector<Token*> tokens;
-	float sizeOfCube=1;
 
 	bool sun_to_view = true;
 
@@ -41,8 +33,6 @@ using namespace std;
 	//when no key is being presses
 	float xdeltaAngle = 0.0f;
 	float ydeltaAngle = 0.0f;
-	float fwd_deltaMove = 0;
-	float side_deltaMove = 0;
 	int xOrigin = -1;
 	int yOrigin = -1;
 
@@ -56,16 +46,6 @@ using namespace std;
 	// angle of rotation for the camera direction
 	float xangle = 0.0f;
 	float yangle = 0.0f;
-
-	void computePos() {
-		/*These VAlues depended from camera, we dont
-		x += deltaMove * lx * 0.1f;
-		z += deltaMove * lz * 0.1f;
-		*/
-		player->setPosition(player->getXPos()+side_deltaMove,
-				player->getYPos()
-				,player->getZPos()+fwd_deltaMove);
-	}
 
 	void processNormalKeys(unsigned char key, int xx, int yy) {
 
@@ -94,9 +74,9 @@ using namespace std;
 
 	        switch (key) {
 	             case 'w' :
-	             case 's' : fwd_deltaMove = 0.0f;break;
+	             case 's' : break;
 	             case 'a' :
-	             case 'd' : side_deltaMove = 0.0f;break;
+	             case 'd' : break;
 	        }
 	}
 
@@ -142,9 +122,9 @@ using namespace std;
 						else
 							center = false;
 
-						tmp = new Cube(sizeOfCube,i*(sizeOfCube+0.01),0,j*(sizeOfCube+0.02),center);
+						tmp = new Cube(sizeOfCube,i*(sizeOfCube+gap_size),0,j*(sizeOfCube+gap_size),center);
 						tmp->setRandomColor();
-						cubes.push_back(tmp);
+						cubes[grid_floor].push_back(tmp);
 					}
 				}
 
@@ -175,9 +155,6 @@ using namespace std;
 		}
 
 	void renderScene(){
-		if (fwd_deltaMove || side_deltaMove){
-				computePos();
-		}
 
 		//Clear Color and Depth Buffers
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -197,31 +174,6 @@ using namespace std;
 		if(sun_to_view){
 			sun->view();
 		}
-
-		/*//TODO remove them Is for Testing
-		glLineWidth(5);
-		//X
-		glPushMatrix();
-		glRotatef(75.0,0.0,32,0);
-		glBegin(GL_LINES);
-			glColor4f(255,0,0,1.0);
-		  glVertex3f(-32.0f, 0.0f, 0.0f);
-		  glVertex3f(32.0f, 1.0f, 0.0f);
-		glEnd();
-		glPopMatrix();
-		//Y
-		glBegin(GL_LINES);
-			glColor4f(0,255,0,1.0);
-		  glVertex3f(0.0f, -32.0f, 0.0f);
-		  glVertex3f(0.0f, 32.0f, 0.0f);
-		glEnd();
-		//Z
-		glBegin(GL_LINES);
-			glColor4f(0,0,255,1.0);
-		  glVertex3f(0.0f, 0.0f, -32.0f);
-		  glVertex3f(0.0f, 0.0f, 32.0f);
-		glEnd();
-		 */
 		//PLAyer view
 		player->view();
 
@@ -231,7 +183,7 @@ using namespace std;
 		}
 
 		// Draw the GROUND
-		for (vector<Cube*>::iterator it = cubes.begin() ; it != cubes.end(); ++it){
+		for (vector<Cube*>::iterator it = cubes[grid_floor].begin() ; it != cubes[grid_floor].end(); ++it){
 			(*it)->view();
 		}
 
