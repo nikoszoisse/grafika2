@@ -64,6 +64,26 @@ using namespace std;
 		}
 	}*/
 
+	void setCube(){
+		Cube* cube;
+		int pos=player->getYPos();
+		int dir_x=player->getDir_x();
+		int dir_z=player->getDir_z();
+		cout << dir_x << " "<<dir_z <<endl;
+		if(dir_x){
+			cube=new Cube(sizeOfCube,player->getXPos()+dir_x*1,
+					player->getYPos(),player->getZPos(),false);
+		}
+		else if(dir_z){
+			cube=new Cube(sizeOfCube,player->getXPos(),
+					player->getYPos(),player->getZPos()+dir_z*1,false);
+		}
+		if(cube!=NULL){
+			cube->setRandomColor();
+			cubes[pos].push_back(cube);
+		}
+
+	}
 	void hasCollusion(string collusion){
 			int player_y = player->getYPos();
 			bool collision=false;
@@ -74,6 +94,7 @@ using namespace std;
 				}
 			}
 			//checkIfHeClimbs(collusion,collision);
+
 			/*Out of Bundaries*/
 			if(player->getXPos()>=65||player->getYPos()>=65||
 					player->getZPos()>=65){
@@ -172,7 +193,7 @@ using namespace std;
 
 	void mouseButton(int button, int state, int mx, int my) {
 		//TODO REMOVE LEFT
-		if(button == GLUT_MIDDLE_BUTTON || button == GLUT_LEFT){
+		if(button == GLUT_MIDDLE_BUTTON){
 			if(state == GLUT_UP){
 			xangle += xdeltaAngle;
 			yangle += ydeltaAngle;
@@ -183,6 +204,9 @@ using namespace std;
 				xOrigin = mx;
 				yOrigin = my;
 			}
+		}
+		else if(button==GLUT_LEFT_BUTTON){
+			setCube();
 		}
 	}
 

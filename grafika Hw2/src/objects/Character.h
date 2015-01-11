@@ -45,6 +45,9 @@ public:
 	void setYPos(float);
 	float getZPos();
 	void setZPos(float);
+	int getDir_z();
+	int getDir_y();
+	int getDir_x();
 };
 
 #endif /* CHARACTER_H_ */

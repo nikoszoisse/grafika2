@@ -232,6 +232,14 @@ bool Character::isMoving(){
 float Character::getWidth(){
 	return 0.5;
 }
-
+int Character::getDir_z(){
+	return dir_z;
+}
+int Character::getDir_y(){
+	return dir_y;
+}
+int Character::getDir_x(){
+	return dir_x;
+}
 Character::~Character() {
 }
