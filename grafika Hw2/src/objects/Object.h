@@ -47,11 +47,12 @@ public:
 	Object(float,float,float);
 	virtual void view()=0;
 	virtual void setPosition(float,float,float)=0;
+
 	float* getObjPosition();
-	//TODO Move to Animation
 	float* getTargetPosition();
 	virtual float getWidth();
 	bool hasCollision(Object*);
+	float *getDiretion();
 	virtual ~Object();
 };
 

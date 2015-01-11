@@ -16,6 +16,9 @@ Object::Object(float x,float y,float z) {
 	this->x_target = x;
 	this->y_target = y;
 	this->z_target = z;
+	this->dir_x = 0;
+	this->dir_y = 0;
+	this->dir_z = 1;
 
 	ambient_color = new GLfloat[4]{0.2, 0.2, 0.2, 1.0};
 	//to xrwma p diaxeetai
@@ -115,6 +118,10 @@ bool Object::hasCollision(Object* target) {
 
 float Object::getWidth(){
 	return 0.0;
+}
+
+float* Object::getDiretion() {
+	return new float[3]{dir_x,dir_y,dir_z};
 }
 
 Object::~Object() {
