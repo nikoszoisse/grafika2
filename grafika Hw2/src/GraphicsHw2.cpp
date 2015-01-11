@@ -74,6 +74,12 @@ using namespace std;
 				}
 			}
 			//checkIfHeClimbs(collusion,collision);
+			/*Out of Bundaries*/
+			if(player->getXPos()>=65||player->getYPos()>=65||
+					player->getZPos()>=65){
+				player->stopMoving();
+				player->setPosition(start_x,start_y,start_z);
+			}
 	}
 
 	void handleCameraView(){
