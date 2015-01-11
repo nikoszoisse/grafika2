@@ -52,15 +52,28 @@ using namespace std;
 
 	int v_Key_pressed_times = 0;
 
+	/*void checkIfHeClimbs(string collusion,bool collision){
+		int player_y=player->getYPos();
+		float player_z=player->getZPos();
+		float player_x=player->getXPos();
+		bool climbed=false;
+		if(cubes[player_y+1].empty()&&collision){
+			player->setPosition(player_x,player_y+1,
+				player_z);
+			climbed=true;
+		}
+	}*/
+
 	void hasCollusion(string collusion){
-		if(collusion == "z"){
 			int player_y = player->getYPos();
+			bool collision=false;
 			for (vector<Cube*>::iterator it = cubes[player_y].begin() ; it != cubes[player_y].end(); ++it){
 				if(player->hasCollision(*it)){
-					player->stopMoving();
+						collision=true;
+						player->stopMoving();
 				}
 			}
-		}
+			//checkIfHeClimbs(collusion,collision);
 	}
 
 	void handleCameraView(){
