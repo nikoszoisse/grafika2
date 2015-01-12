@@ -16,11 +16,21 @@ private:
 	GLfloat *color;
 public:
 	Sun(float,float,float,float);
-	virtual ~Sun();
+	void hide();
+
 	void view();
 	void setPosition(float,float,float);
-	float getWidth();
-	void hide();
+
+	void moveForward(); /*Moves to x, or z*/
+	void moveBackWard(); /*ROtates/ ,Update dir z and call moveFoward*/
+	void moveLeft();	/*Rotate update dir x and call movefoward*/
+	void moveRight();	/**/
+	void moveUp();
+	void moveDown();
+	void update_target();
+
+
+	virtual ~Sun();
 };
 
 #endif /* SUN_H_ */

@@ -76,5 +76,6 @@ void LightObject::setSpotDirection(float x_pos, float y_pos, float z_pos) {
 
 LightObject::~LightObject() {
 	num_of_lights = this->lightId - 1;
+	this->disableLight();
 }
 

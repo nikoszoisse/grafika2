@@ -16,6 +16,9 @@ Sun::Sun(float x,float y,float z,float radius)
 	this->color = new GLfloat[4]{255, 255, 34, 1.0};
 }
 
+void Sun::update_target() {
+}
+
 Sun::~Sun() {
 	// TODO Auto-generated destructor stub
 }
@@ -32,15 +35,29 @@ void Sun::view(){
 	this->enableLight();
 }
 
+void Sun::hide(){
+	this->disableLight();
+}
+
 void Sun::setPosition(float x,float y,float z){
 	this->setObjPos(x,y,z);
 	this->setLightPos(x,y,z-radius/2);
 }
 
-float Sun::getWidth() {
-	return this->radius*2;
+void Sun::moveForward() {
 }
 
-void Sun::hide(){
-	this->disableLight();
+void Sun::moveBackWard() {
+}
+
+void Sun::moveLeft() {
+}
+
+void Sun::moveRight() {
+}
+
+void Sun::moveUp() {
+}
+
+void Sun::moveDown() {
 }

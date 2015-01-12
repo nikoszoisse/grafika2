@@ -19,7 +19,6 @@
 #include "./objects/Token.h"
 
 using namespace std;
-
 	Character *player = new Character(start_x, start_y, start_z);
 	Sun *sun = new Sun(sun_start_x, sun_start_y, sun_start_z, sun_size_rad);
 
@@ -52,55 +51,90 @@ using namespace std;
 
 	int v_Key_pressed_times = 0;
 
-	/*void checkIfHeClimbs(string collusion,bool collision){
-		int player_y=player->getYPos();
+	void checkIfHeClimbs(){
+		float player_y=player->getYPos();
 		float player_z=player->getZPos();
 		float player_x=player->getXPos();
-		bool climbed=false;
-		if(cubes[player_y+1].empty()&&collision){
-			player->setPosition(player_x,player_y+1,
-				player_z);
-			climbed=true;
+		if(cubes[(int)player_y+1].empty()){
+			cout << player_y <<endl;
+			cout << player_y+1 <<endl;
+			player->setPosition(player_x,player_y+1,player_z);
 		}
-	}*/
-
-	void setCube(){
-		Cube* cube;
-		int pos=player->getYPos();
-		int dir_x=player->getDir_x();
-		int dir_z=player->getDir_z();
-		cout << dir_x << " "<<dir_z <<endl;
-		if(dir_x){
-			cube=new Cube(sizeOfCube,player->getXPos()+dir_x*1,
-					player->getYPos(),player->getZPos(),false);
-		}
-		else if(dir_z){
-			cube=new Cube(sizeOfCube,player->getXPos(),
-					player->getYPos(),player->getZPos()+dir_z*1,false);
-		}
-		if(cube!=NULL){
-			cube->setRandomColor();
-			cubes[pos].push_back(cube);
-		}
-
 	}
-	void hasCollusion(string collusion){
-			int player_y = player->getYPos();
-			bool collision=false;
-			for (vector<Cube*>::iterator it = cubes[player_y].begin() ; it != cubes[player_y].end(); ++it){
-				if(player->hasCollision(*it)){
-						collision=true;
-						player->stopMoving();
+
+	Cube* hasCollusion(Object* obj,string collusion){
+			int obj_floor;
+			if(collusion == "z")
+				obj_floor= obj->getYPos();
+			else if(collusion == "y")
+				obj_floor = obj->getYPos()+1;
+
+			for (vector<Cube*>::iterator it = cubes[obj_floor].begin() ; it != cubes[obj_floor].end(); ++it){
+				if(obj->hasCollision(*it)){
+						//checkIfHeClimbs();
+						obj->stopMoving();
+						return (*it);
 				}
 			}
-			//checkIfHeClimbs(collusion,collision);
+			return NULL;
+	}
 
-			/*Out of Bundaries*/
-			if(player->getXPos()>=65||player->getYPos()>=65||
-					player->getZPos()>=65){
-				player->stopMoving();
-				player->setPosition(start_x,start_y,start_z);
-			}
+	int get_creation_floor(Object* creator){
+		Cube *col_cube;
+
+		if((col_cube = hasCollusion(creator,"y"))){
+			float * col_cube_dir = creator->getDiretion();
+			col_cube->setDirection(col_cube_dir);
+			col_cube->update_target();
+			return 1+get_creation_floor(col_cube);
+		}
+
+		return 1;
+	}
+
+	void createCube(){
+		Cube *cube,*col_cube;
+		int creation_floor,dir_x,dir_z;
+		creation_floor = player->getYPos();
+		dir_x = player->getDir_x();
+		dir_z = player->getDir_z();
+
+		player->update_target();
+
+		if((col_cube = hasCollusion(player,"z"))){
+			float * col_cube_dir = new float[3]{0,1,0};
+			col_cube->setDirection(col_cube_dir);
+			col_cube->update_target();
+			creation_floor += get_creation_floor(col_cube);
+		}
+
+		if(dir_x){
+			cube=new Cube(sizeOfCube,player->getXPos()+dir_x*1,
+					creation_floor,player->getZPos(),false);
+		}
+
+		else if(dir_z){
+			cube=new Cube(sizeOfCube,player->getXPos(),
+					creation_floor,player->getZPos()+dir_z*1,false);
+		}
+
+		if(cube!=NULL){
+			cube->setRandomColor();
+			cubes[creation_floor].push_back(cube);
+		}
+	}
+
+	void kick_cube(Object* kicker){
+		Cube *col_cube;
+		kicker->update_target();
+		float *kicker_dir = kicker->getDiretion();
+		col_cube = hasCollusion(kicker,"z");
+		if(col_cube){
+			col_cube->setDirection(kicker_dir);
+			kick_cube(col_cube);
+			col_cube->moveForward();
+		}
+
 	}
 
 	void handleCameraView(){
@@ -149,10 +183,10 @@ using namespace std;
 	void pressKey(unsigned char key, int xx, int yy) {
 
 	       switch (key) {
-	             case 'w' : player->moveForward();hasCollusion("z"); break;
-	             case 's' : player->moveBackWard();player->moveForward();hasCollusion("z");break;
-	             case 'a' : player->moveLeft(); player->moveForward(); hasCollusion("z");break;
-	             case 'd' : player->moveRight(); player->moveForward();hasCollusion("z");break;
+	             case 'w' : player->moveForward();hasCollusion(player,"z"); break;
+	             case 's' : player->moveBackWard();break;
+	             case 'a' : player->moveLeft(); break;
+	             case 'd' : player->moveRight(); break;
 	             case 'v' : v_Key_pressed_times++;break;
 	             //TODO remove z, is for testing light Position
 	             case 'z' : sun->setPosition(1.0f,3.0f,130.0f);break;
@@ -160,7 +194,7 @@ using namespace std;
 	             //Hide the sun
 	             case 'c' : sun_to_view = !sun_to_view;sun->hide();break;
 	             case 'l' : tokens.push_back(new Token(player->getXPos(),
-	            		 player->getYPos(),player->getZPos(),token_size_rad));break;
+	            		 player->getYPos(),player->getZPos(),token_size_rad,player->moves));break;
 	       }
           // glutPostRedisplay();
 	}
@@ -205,8 +239,11 @@ using namespace std;
 				yOrigin = my;
 			}
 		}
-		else if(button==GLUT_LEFT_BUTTON){
-			setCube();
+		else if(button==GLUT_LEFT_BUTTON && state == GLUT_DOWN){
+			createCube();
+		}
+		else if(button==GLUT_RIGHT_BUTTON && state == GLUT_DOWN){
+			kick_cube(player);
 		}
 	}
 
@@ -272,26 +309,46 @@ using namespace std;
 				x_center+lx, y_center+ly,  z_center+lz,
 				0.0f, 1.0f,  0.0f);
 
-		if(sun_to_view){
+		//SUN
+		int moves;
+		moves = player->moves;
+		sun->setPosition(moves%64+sun_start_x,moves%64+sun_start_y,sun_start_z);
+		//TODO remove sun to view var
+		if(moves<hide_sun_moves && sun_to_view){
 			sun->view();
 		}
-
 		//PLAyer view
-		player->view();
+		if(player->isOutOfBounds()){
+			player->stopMoving();
+			player->setPosition(start_x,start_y,start_z);
+		}else{
+			player->view();
+		}
+
 
 		// Draw the TOkens
 		for (vector<Token*>::iterator it = tokens.begin() ; it != tokens.end(); ++it){
-			(*it)->view();
+			if((moves - (*it)->getCreatedTimeMove())<=hide_token_moves)
+				(*it)->view();
+			else{
+				(*it)->~Token();
+				tokens.erase(it);
+				break;
+			}
 		}
 
 		// Draw the GROUND
-		for (vector<Cube*>::iterator it = cubes[grid_floor].begin() ; it != cubes[grid_floor].end(); ++it){
-			(*it)->view();
+		for(int floor=grid_floor;floor<grid_size;floor++){
+			for (vector<Cube*>::iterator it = cubes[floor].begin() ; it != cubes[floor].end(); ++it){
+				if((*it)->isOutOfBounds() && floor>grid_floor){
+					cubes[floor].erase(it);
+					//glutPostRedisplay();
+					break;
+				}
+				(*it)->view();
+			}
 		}
-		// Draw the GROUND
-		for (vector<Cube*>::iterator it = cubes[1].begin() ; it != cubes[1].end(); ++it){
-			(*it)->view();
-		}
+
 
 		glutSwapBuffers();
 	}

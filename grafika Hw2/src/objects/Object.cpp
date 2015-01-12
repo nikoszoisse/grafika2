@@ -19,6 +19,13 @@ Object::Object(float x,float y,float z) {
 	this->dir_x = 0;
 	this->dir_y = 0;
 	this->dir_z = 1;
+	this->width = 0;
+	this->on_move = false;
+	this->on_rot = false;
+	this->on_jump = false;
+	this->target_rot_deg=0;
+	this->curr_rot_deg=0;
+	this->clock_rot = 1;
 
 	ambient_color = new GLfloat[4]{0.2, 0.2, 0.2, 1.0};
 	//to xrwma p diaxeetai
@@ -116,12 +123,70 @@ bool Object::hasCollision(Object* target) {
 	return false;
 }
 
+void Object::checkIfFinished(){
+	if(fabs(dir_x*x_point-dir_x*x_target)<=0.1 && fabs(dir_y*y_point-dir_y*y_target)<=0.1 &&
+			(fabs(dir_z*z_point-dir_z*z_target)<=0.1) && !on_rot){
+		on_move=false;
+		on_jump=false;
+
+		target_rot_deg=0;
+	}
+}
+
 float Object::getWidth(){
-	return 0.0;
+	return width;
 }
 
 float* Object::getDiretion() {
 	return new float[3]{dir_x,dir_y,dir_z};
+}
+
+float Object::getXPos() {
+	return x_point;
+}
+
+float Object::getYPos() {
+	return y_point;
+}
+
+void Object::stopMoving() {
+	on_move = false;
+}
+
+float Object::getZPos() {
+	return z_point;
+}
+
+
+bool Object::isMoving(){
+	return on_move;
+}
+
+int Object::getDir_z(){
+	return dir_z;
+}
+
+int Object::getDir_y(){
+	return dir_y;
+}
+
+int Object::getDir_x(){
+	return dir_x;
+}
+
+void Object::setDirection(float* direction) {
+	this->dir_x = direction[0];
+	this->dir_y = direction[1];
+	this->dir_z = direction[2];
+}
+
+bool Object::isOutOfBounds(){
+	/*Out of Bundaries*/
+	if(this->x_point>=grid_size||this->y_point>=grid_size||
+			this->z_point>=grid_size){
+		return true;
+	}
+	return false;
 }
 
 Object::~Object() {

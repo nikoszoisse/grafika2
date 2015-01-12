@@ -10,18 +10,19 @@
 /**
  * Creates an Object Token
  */
-Token::Token(float x,float y,float z,float radius)
-		:Object(x,y,z),LightObject(x,y,z+5){
+Token::Token(float x,float y,float z,float radius,int move)
+		:Object(x,y,z),LightObject(x,y,z+1){
 	this->radius = radius;
+	this->width = radius*2;
 	this->color = new GLfloat[4]{1.0, 0, 0, 1};
 	this->quadraticAttenuation = 0.2f;
 	this->spotExponent = 0.0f;
 	this->spotCutoff = 180.0f;
 	this->setSpotDirection(1,0,0);
+	this->created_time_move = move;
 }
 
 Token::~Token() {
-	// TODO Auto-generated destructor stub
 }
 
 void Token::view(){
@@ -42,6 +43,29 @@ void Token::setPosition(float x,float y,float z){
 	this->setObjPos(x,y,z);
 	this->setLightPos(x,y,z-radius/2);
 }
-float Token::getWidth() {
-	return this->radius*2;
+
+void Token::moveForward() {
 }
+
+void Token::moveBackWard() {
+}
+
+void Token::moveLeft() {
+}
+
+void Token::moveRight() {
+}
+
+void Token::moveUp() {
+}
+
+void Token::update_target() {
+}
+
+int Token::getCreatedTimeMove() const {
+	return created_time_move;
+}
+
+void Token::moveDown() {
+}
+

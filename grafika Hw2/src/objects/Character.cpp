@@ -13,27 +13,20 @@ using namespace std;
 Character::Character(float x_pos,float y_pos,float z_pos):
 		Object(x_pos,y_pos,z_pos) {
 	// TODO Auto-generated constructor stub
-	this->on_move = false;
-	this->on_rot = false;
-	this->dir_x = 0;
-	this->dir_y = 0;
-	this->dir_z = 1;
-	this->target_rot_deg=0;
-	this->curr_rot_deg=0;
-	this->clock_rot = 1;
-	this->motion = 1.0;
+	this->width = 0.5;
+	this->moves = 0;
 }
 
 void Character::view() {
 	this->checkIfFinished();
 	//Do Move animyion
-	if(on_move && !on_rot){
+	if((on_move && !on_rot) || (on_jump && on_rot)){
 		x_point += move_anim_frame*dir_x;
-		y_point += move_anim_frame*dir_y;
 		z_point +=move_anim_frame*dir_z;
+		y_point += move_anim_frame*dir_y;
 	}
 	//Do Rotate Animation
-	if(on_rot){
+	if(on_rot || on_jump){
 		on_move=false;
 		curr_rot_deg += rotate_anim_frame;
 		if(abs(target_rot_deg) <= curr_rot_deg){
@@ -123,17 +116,22 @@ void Character::renderCharLegs(){
 		glEnd();
 	glPopMatrix();
 }
+void Character::update_target(){
+	z_target = z_point+(char_step+gap_size*sizeOfCube)*dir_z;
+	x_target = x_point+(char_step+gap_size*sizeOfCube)*dir_x;
+	y_target = y_point+char_step*dir_y;
+}
 
 void Character::moveForward(){
 	if(on_move)
 		return;
-
-	z_target = z_point+(char_step+gap_size*sizeOfCube)*dir_z;
-	x_target = x_point+(char_step+gap_size*sizeOfCube)*dir_x;
-	y_target = y_point+(char_step+gap_size*sizeOfCube)*dir_y;
-
+	x_target = x_point;
+	y_target = y_point;
+	z_target = z_point;
+	update_target();
 
 	on_move=true;
+	this->moves++;
 }
 
 void Character::moveBackWard(){
@@ -196,50 +194,21 @@ void Character::moveRight(){
 	//moveForward();
 }
 
-void Character::checkIfFinished(){
-	if(fabs(dir_x*x_point-dir_x*x_target)<=0.1 && fabs(dir_y*y_point-dir_y*y_target)<=0.1 &&
-			(fabs(dir_z*z_point-dir_z*z_target)<=0.1) && !on_rot){
-		on_move=false;
-		target_rot_deg=0;
-	}
-}
-
 void Character::setPosition(float x, float y, float z) {
 	this->setObjPos(x,y,z);
 }
 
-float Character::getXPos() {
-	return x_point;
+
+void Character::moveUp() {
+	dir_y = 1;
+	on_rot = true;
+	on_jump = true;
+	clock_rot = -1;
+	target_rot_deg = 360;
 }
 
-float Character::getYPos() {
-	return y_point;
+void Character::moveDown() {
 }
 
-void Character::stopMoving() {
-	on_move = false;
-}
-
-float Character::getZPos() {
-	return z_point;
-}
-
-
-bool Character::isMoving(){
-	return on_move;
-}
-
-float Character::getWidth(){
-	return 0.5;
-}
-int Character::getDir_z(){
-	return dir_z;
-}
-int Character::getDir_y(){
-	return dir_y;
-}
-int Character::getDir_x(){
-	return dir_x;
-}
 Character::~Character() {
 }

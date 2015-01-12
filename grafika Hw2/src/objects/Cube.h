@@ -13,8 +13,7 @@
 
 class Cube: public Object {
 	private:
-	float size,distX,distY,distZ;
-	float x,y,z;
+	//float x,y,z;
 	GLfloat *color;
 	bool field_center;
 	void createCube(float,float,float);
@@ -23,12 +22,20 @@ public:
 	Cube* getCenter();
 	void view();
 	void setPosition(float,float,float);
-	float getX();
+	/*float getX();
 	float getY();
-	float getZ();
-	float getWidth();
+	float getZ();*/
+
 	void setRandomColor();
 	void setColor(GLfloat*);
+	void moveForward(); /*Moves to x, or z*/
+	void moveBackWard(); /*ROtates/ ,Update dir z and call moveFoward*/
+	void moveLeft();	/*Rotate update dir x and call movefoward*/
+	void moveRight();	/**/
+	void moveUp();
+	void moveDown();
+	void update_target();
+
 	virtual ~Cube();
 };
 

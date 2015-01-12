@@ -14,12 +14,22 @@ class Token : public Object,LightObject{
 private:
 	GLfloat radius;
 	GLfloat *color;
+	int created_time_move;
 public:
-	Token(float,float,float,float);
+	Token(float,float,float,float,int);
 	virtual ~Token();
 	void view();
 	void setPosition(float,float,float);
-	float getWidth();
+	void moveForward(); /*Moves to x, or z*/
+	void moveBackWard(); /*ROtates/ ,Update dir z and call moveFoward*/
+	void moveLeft();	/*Rotate update dir x and call movefoward*/
+	void moveRight();	/**/
+	void moveUp();
+	void moveDown();
+	void update_target();
+
+	int getCreatedTimeMove() const;
+
 };
 
 #endif /* Token_H_ */
