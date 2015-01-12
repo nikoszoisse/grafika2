@@ -14,6 +14,8 @@
 #include <GL/glut.h>
 #include "settings.h"
 
+static int created_objects = 0;
+
 class Object {
 protected:
 	/*
@@ -58,6 +60,9 @@ private:
 	GLfloat shininess;
 public:
 	Object(float,float,float);
+
+	int ID;
+
 	virtual void view()=0;
 	virtual void setPosition(float,float,float)=0;
 

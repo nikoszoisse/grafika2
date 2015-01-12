@@ -27,6 +27,8 @@ Object::Object(float x,float y,float z) {
 	this->curr_rot_deg=0;
 	this->clock_rot = 1;
 
+	this->ID = ++created_objects;
+
 	ambient_color = new GLfloat[4]{0.2, 0.2, 0.2, 1.0};
 	//to xrwma p diaxeetai
 	diffuse_color = new GLfloat[4]{0.8, 0.8, 0.8, 1.0};
@@ -184,6 +186,11 @@ bool Object::isOutOfBounds(){
 	/*Out of Bundaries*/
 	if(this->x_point>=grid_size||this->y_point>=grid_size||
 			this->z_point>=grid_size){
+		return true;
+	}
+
+	if(this->x_target>=grid_size||this->y_target>=grid_size||
+			this->z_target>=grid_size){
 		return true;
 	}
 	return false;

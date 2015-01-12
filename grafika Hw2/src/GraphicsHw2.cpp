@@ -51,6 +51,20 @@ using namespace std;
 
 	int v_Key_pressed_times = 0;
 
+
+	void delete_Cube(Cube* match){
+		for(int floor=grid_floor;floor<grid_size;floor++){
+			for (vector<Cube*>::iterator it = cubes[floor].begin();
+					it != cubes[floor].end(); ++it){
+				if((*it)->ID == match->ID){
+					cubes[floor].erase(it);
+					return;
+				}
+			}
+		}
+	}
+
+
 	void checkIfHeClimbs(){
 		float player_y=player->getYPos();
 		float player_z=player->getZPos();
@@ -66,8 +80,11 @@ using namespace std;
 			int obj_floor;
 			if(collusion == "z")
 				obj_floor= obj->getYPos();
-			else if(collusion == "y")
-				obj_floor = obj->getYPos()+1;
+			else if(collusion == "y"){
+				obj_floor = obj->getYPos() + 1*obj->getDir_y();
+				if(obj_floor < grid_floor)
+					obj_floor = grid_floor;
+			}
 
 			for (vector<Cube*>::iterator it = cubes[obj_floor].begin() ; it != cubes[obj_floor].end(); ++it){
 				if(obj->hasCollision(*it)){
@@ -78,7 +95,7 @@ using namespace std;
 			}
 			return NULL;
 	}
-
+	/*Ερωτημα vi*/
 	int get_creation_floor(Object* creator){
 		Cube *col_cube;
 
@@ -91,7 +108,7 @@ using namespace std;
 
 		return 1;
 	}
-
+	/*Ερωτημα vi*/
 	void createCube(){
 		Cube *cube,*col_cube;
 		int creation_floor,dir_x,dir_z;
@@ -123,7 +140,7 @@ using namespace std;
 			cubes[creation_floor].push_back(cube);
 		}
 	}
-
+	/*Ερώτημα viii*/
 	void kick_cube(Object* kicker){
 		Cube *col_cube;
 		kicker->update_target();
@@ -136,7 +153,63 @@ using namespace std;
 		}
 
 	}
+	/*Ερωτημα iv*/
 
+	void delete_font_cube(){
+		Cube *col_cube;
+		player->update_target();
+
+		if((col_cube = hasCollusion(player,"z"))){
+			delete_Cube(col_cube);
+		}
+	}
+	void delete_half_row(Object* bad_guy){
+		Cube *col_cube;
+		bad_guy->update_target();
+
+		if((col_cube = hasCollusion(bad_guy,"z"))){
+			col_cube->setDirection(bad_guy->getDiretion());
+			delete_half_row(col_cube);
+
+			delete_Cube(col_cube);
+		}
+	}
+
+	void delete_half_collum(Object* bad_guy){
+		cout << "e"<<endl;
+		Cube *col_cube;
+		bad_guy->update_target();
+
+		if((col_cube = hasCollusion(bad_guy,"y"))){
+			col_cube->setDirection(bad_guy->getDiretion());
+			delete_half_collum(col_cube);
+
+			delete_Cube(col_cube);
+		}
+	}
+	/*Ερωτημα v*/
+	void delete_collum_row(){
+		vector<Cube*>::iterator it;
+		Cube *col_cube;
+		float *direction = new float[3]{0,1,0};
+		player->update_target();
+		if((col_cube = hasCollusion(player,"z"))){
+			//TODO MAybe not needed Delte the half row
+			col_cube->setDirection(player->getDiretion());
+			delete_half_row(col_cube);
+
+			//Delete the whole Column
+			col_cube->setDirection(direction);
+			delete_half_collum(col_cube);
+			direction[1] = -1; //update the y
+			col_cube->setDirection(direction);
+			delete_half_collum(col_cube);
+
+			//Delete the front
+			delete_Cube(col_cube);
+		}
+	}
+	/*Ερωτημα ix*/
 	void handleCameraView(){
 		if(v_Key_pressed_times%5 == 0){
 			v_Key_pressed_times = 0;
@@ -188,6 +261,8 @@ using namespace std;
 	             case 'a' : player->moveLeft(); break;
 	             case 'd' : player->moveRight(); break;
 	             case 'v' : v_Key_pressed_times++;break;
+	             case 'e' : delete_collum_row();break;
+	             case 'q' : delete_font_cube();break;
 	             //TODO remove z, is for testing light Position
 	             case 'z' : sun->setPosition(1.0f,3.0f,130.0f);break;
 	             case 'x' : sun->setPosition(1.0f,1.0f,65.0f);break;
@@ -310,6 +385,7 @@ using namespace std;
 				0.0f, 1.0f,  0.0f);
 
 		//SUN
+		/*Ερώτημα iii*/
 		int moves;
 		moves = player->moves;
 		sun->setPosition(moves%64+sun_start_x,moves%64+sun_start_y,sun_start_z);
@@ -317,6 +393,7 @@ using namespace std;
 		if(moves<hide_sun_moves && sun_to_view){
 			sun->view();
 		}
+
 		//PLAyer view
 		if(player->isOutOfBounds()){
 			player->stopMoving();
@@ -336,7 +413,6 @@ using namespace std;
 				break;
 			}
 		}
-
 		// Draw the GROUND
 		for(int floor=grid_floor;floor<grid_size;floor++){
 			for (vector<Cube*>::iterator it = cubes[floor].begin() ; it != cubes[floor].end(); ++it){
