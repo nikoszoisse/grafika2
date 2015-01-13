@@ -20,7 +20,7 @@
 #include "./objects/Token.h"
 
 using namespace std;
-	Character *player = new Character(start_x*(sizeOfCube+gap_size), start_y, start_z*(sizeOfCube+gap_size));
+	Character *player = new Character(0,1,0);//start_x*(sizeOfCube+gap_size), start_y, start_z*(sizeOfCube+gap_size));
 	Sun *sun = new Sun(sun_start_x, sun_start_y, sun_start_z, sun_size_rad);
 
 	vector<Cube*> cubes[grid_size];
@@ -103,6 +103,7 @@ using namespace std;
 				obj_floor= obj->getYPos();
 			else if(collusion == "y"){
 				obj_floor = obj->getYPos() + 1*obj->getDir_y();
+				cout << "obj to seek"<<obj_floor<<endl;
 				if(obj_floor < grid_floor)
 					return false;
 			}
@@ -140,7 +141,7 @@ using namespace std;
 		Cube *col_cube;
 
 		if((col_cube = hasCollusion(creator,"y"))){
-			float * col_cube_dir = creator->getDiretion();
+			double * col_cube_dir = creator->getDiretion();
 			col_cube->setDirection(col_cube_dir);
 			col_cube->update_target();
 			return 1+get_creation_floor(col_cube);
@@ -152,16 +153,17 @@ using namespace std;
 	void createCube(){
 		Cube *cube,*col_cube,*standing_cube;
 		int creation_floor,dir_x,dir_z;
+
 		creation_floor = player->getYPos();
 		dir_x = player->getDir_x();
 		dir_z = player->getDir_z();
 
-		player->setDirection(new float[3]{0,-1,0});
+		player->setDirection(new double[3]{0,-1,0});
 		player->update_target();
 		if((standing_cube= hasCollusion(player,"y"))){
+			cout << standing_cube->apothema<< endl;
 			if(standing_cube->apothema==0){
-				cout << standing_cube->apothema<< endl;
-				player->setDirection(new float[3]{dir_x,0,dir_z});
+				player->setDirection(new double[3]{dir_x,0,dir_z});
 				return;
 			}
 			else{
@@ -171,10 +173,10 @@ using namespace std;
 
 		}
 
-		player->setDirection(new float[3]{dir_x,0,dir_z});
+		player->setDirection(new double[3]{dir_x,0,dir_z});
 		player->update_target();
 		if((col_cube = hasCollusion(player,"z"))){
-			float * col_cube_dir = new float[3]{0,1,0};
+			double * col_cube_dir = new double[3]{0,1,0};
 			col_cube->setDirection(col_cube_dir);
 			col_cube->update_target();
 			creation_floor += get_creation_floor(col_cube);
@@ -199,7 +201,7 @@ using namespace std;
 	void kick_cube(Object* kicker){
 		Cube *col_cube;
 		kicker->update_target();
-		float *kicker_dir = kicker->getDiretion();
+		double *kicker_dir = kicker->getDiretion();
 		col_cube = hasCollusion(kicker,"z");
 		if(col_cube){
 			col_cube->setDirection(kicker_dir);
@@ -245,7 +247,7 @@ using namespace std;
 	void delete_collum_row(){
 		vector<Cube*>::iterator it;
 		Cube *col_cube;
-		float *direction = new float[3]{0,1,0};
+		double *direction = new double[3]{0,1,0};
 		player->update_target();
 		if((col_cube = hasCollusion(player,"z"))){
 			//TODO MAybe not needed Delte the half row
@@ -256,7 +258,7 @@ using namespace std;
 			col_cube->setDirection(direction);
 			delete_half_collum(col_cube);
 			direction[1] = -1; //update the y
-			//col_cube->setDirection(direction);
+			col_cube->setDirection(direction);
 			delete_half_collum(col_cube);
 
 			//Delete the front
@@ -323,7 +325,7 @@ using namespace std;
 	             case 'z' : sun->setPosition(1.0f,3.0f,130.0f);break;
 	             case 'x' : sun->setPosition(1.0f,1.0f,65.0f);break;
 	             //Hide the sun
-	             case 'c' : sun_to_view = !sun_to_view;sun->hide();break;
+	             case 'c' : sun_to_view = !sun_to_view;sun->hide();cout<<"cubes: "<<cubes[0].size()<<endl;break;
 	             case 'l' : tokens.push_back(new Token(player->getXPos(),
 	            		 player->getYPos(),player->getZPos(),token_size_rad,player->moves));break;
 	       }
@@ -380,8 +382,8 @@ using namespace std;
 
 	void createField(){
 		bool center=false;
-		for(int i=0;i<=grid_size;i++){
-					for(int j=0;j<=grid_size;j++){
+		for(int i=0;i<grid_size;i++){
+					for(int j=0;j<grid_size;j++){
 						Cube* tmp;
 						if((i==grid_size/2&&j==grid_size/2)){
 							center = true;
@@ -389,8 +391,9 @@ using namespace std;
 						else{
 							center = false;
 						}
+						tmp = new Cube(sizeOfCube,i,0,j,center);
 						//tmp = new Cube(sizeOfCube,i*sizeOfCube+gap_size,0,j*sizeOfCube+gap_size,center);
-						tmp = new Cube(sizeOfCube,i*(sizeOfCube+gap_size),0,j*(sizeOfCube+gap_size),center);
+						//tmp = new Cube(sizeOfCube,i*(sizeOfCube+gap_size),0,j*(sizeOfCube+gap_size),center);
 						//tmp = new Cube(sizeOfCube,(i+gap_size)*sizeOfCube,0,(j+gap_size)*sizeOfCube,center);
 						tmp->setRandomColor();
 						cubes[grid_floor].push_back(tmp);
@@ -462,18 +465,18 @@ using namespace std;
 		//cout << "size 1: "<< cubes[0].size()<<endl;
 		for(int floor=grid_floor;floor<grid_size;floor++){
 			for (vector<Cube*>::iterator it = cubes[floor].begin() ; it != cubes[floor].end(); ++it){
-				if(( (*it)->isOutOfBounds() && !(*it)->isMoving()) /*&& floor != grid_floor)*/){
+				//Erase while cube is out of bounds
+				if(( (*it)->isOutOfBounds() && !(*it)->isMoving())){
 					cubes[floor].erase(it);
-					//glutPostRedisplay();
 					break;
 				}
-				/*if((*it)->getDir_y()!=0&&(*it)->getYPos()*(*it)->getDir_y() < floor
+				/*Cleans up cubes that are not belong in current  floor*/
+				if((*it)->getDir_y()!=0&&(*it)->getYPos() < floor
 						&& !(*it)->isMoving()){
-					cout<< (*it)->getYPos()*(*it)->getDir_y() << " "<< floor<<endl;
+					cout<< (*it)->getYPos() << " erase: "<< floor<<endl;
 					cubes[floor].erase(it);
-					//glutPostRedisplay();
 					break;
-				}*/
+				}
 				(*it)->view();
 			}
 		}

@@ -36,11 +36,11 @@ protected:
 
 	GLfloat *spotDirection;		//Normalized Vector
 
-	LightObject(float,float,float);
+	LightObject(double,double,double);
 	void enableLight();
 	void disableLight();
-	void setLightPos(float,float,float);
-	void setSpotDirection(float,float,float);
+	void setLightPos(double,double,double);
+	void setSpotDirection(double,double,double);
 public:
 	LightObject();
 	virtual ~LightObject();

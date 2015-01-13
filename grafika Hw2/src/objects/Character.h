@@ -20,9 +20,9 @@ private:
 public:
 	int moves;
 	int points;
-	Character(float,float,float);
+	Character(double,double,double);
 	void view();
-	void setPosition(float,float,float);
+	void setPosition(double,double,double);
 	/*Temp point(to go) from char x,y,z coordinates*/
 	void moveForward(); /*Moves to x, or z*/
 	void moveBackWard(); /*ROtates/ ,Update dir z and call moveFoward*/

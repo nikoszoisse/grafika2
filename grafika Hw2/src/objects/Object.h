@@ -23,26 +23,26 @@ protected:
 	 *    the natural colour of the object and to put the Specular colour to white.
 	 *   The emission colour is generally black for objects that do not shine by their own light.
 	 */
-	float x_point,y_point,z_point;
-	float x_target,y_target,z_target;
-	float dir_z; /*1,-1*/
-	float dir_x;
-	float dir_y;
-	float width;
+	double x_point,y_point,z_point;
+	double x_target,y_target,z_target;
+	double dir_z; /*1,-1*/
+	double dir_x;
+	double dir_y;
+	double width;
 	//Animations
 	bool on_move;
 	bool on_rot;
 	bool on_jump;
 
-	float target_rot_deg; /*movefowarrd:0,movrelft,right 90,270, move_back: 180*/
-	float curr_rot_deg; /*Where  to start rotatiing Default =0*/
-	float clock_rot;
-	float motion;
+	double target_rot_deg; /*movefowarrd:0,movrelft,right 90,270, move_back: 180*/
+	double curr_rot_deg; /*Where  to start rotatiing Default =0*/
+	double clock_rot;
+	double motion;
 
 	void applyMaterial();
 	void applyMaterial(GLfloat*,GLfloat*,GLfloat*,GLfloat);
 	void applyMaterial(GLfloat*,GLfloat*,GLfloat*,GLfloat*,GLfloat);
-	void setObjPos(float,float,float);
+	void setObjPos(double,double,double);
 	//ANimation
 	virtual void checkIfFinished();
 private:
@@ -58,12 +58,12 @@ private:
 
 	GLfloat shininess;
 public:
-	Object(float,float,float);
+	Object(double,double,double);
 
 	int ID;
 
 	virtual void view()=0;
-	virtual void setPosition(float,float,float)=0;
+	virtual void setPosition(double,double,double)=0;
 
 	virtual void moveForward()=0; /*Moves to x, or z*/
 	virtual void moveBackWard()=0; /*ROtates/ ,Update dir z and call moveFoward*/
@@ -73,20 +73,20 @@ public:
 	virtual void moveDown()=0;
 	virtual void update_target()=0;
 
-	float* getObjPosition();
-	float* getTargetPosition();
+	double* getObjPosition();
+	double* getTargetPosition();
 	bool hasCollision(Object*);
-	float *getDiretion();
-	void setDirection(float*);
+	double *getDiretion();
+	void setDirection(double*);
 	void stopMoving();
 	bool isOutOfBounds();
-	virtual float getWidth();
-	virtual float getXPos();
-	//virtual void setXPos(float);
-	virtual float getYPos();
-	//virtual void setYPos(float);
-	virtual float getZPos();
-	//virtual void setZPos(float);
+	virtual double getWidth();
+	virtual double getXPos();
+	//virtual void setXPos(double);
+	virtual double getYPos();
+	//virtual void setYPos(double);
+	virtual double getZPos();
+	//virtual void setZPos(double);
 	virtual int getDir_z();
 	virtual int getDir_y();
 	virtual int getDir_x();

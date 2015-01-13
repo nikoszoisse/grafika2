@@ -10,7 +10,7 @@
 /**
  * Creates an Object Sun
  */
-Sun::Sun(float x,float y,float z,float radius)
+Sun::Sun(double x,double y,double z,double radius)
 		:Object(x,y,z),LightObject(x,y,z){
 	this->radius = radius;
 	this->color = new GLfloat[4]{255, 255, 34, 1.0};
@@ -39,7 +39,7 @@ void Sun::hide(){
 	this->disableLight();
 }
 
-void Sun::setPosition(float x,float y,float z){
+void Sun::setPosition(double x,double y,double z){
 	this->setObjPos(x,y,z);
 	this->setLightPos(x,y,z-radius/2);
 }

@@ -10,7 +10,7 @@
 #include <math.h>
 using namespace std;
 
-Character::Character(float x_pos,float y_pos,float z_pos):
+Character::Character(double x_pos,double y_pos,double z_pos):
 		Object(x_pos,y_pos,z_pos) {
 	// TODO Auto-generated constructor stub
 	this->width = 0.5;
@@ -119,6 +119,9 @@ void Character::update_target(){
 	z_target = z_point+(char_step+gap_size*sizeOfCube)*dir_z;
 	x_target = x_point+(char_step+gap_size*sizeOfCube)*dir_x;
 	y_target = y_point+char_step*dir_y;
+	this->x_target = round(x_target);
+	this->y_target = round(y_target);
+	this->z_target = round(z_target);
 	cout << "x: "<< x_target<<" y: "<<y_target << " z: "<<z_target<<endl;
 }
 
@@ -193,7 +196,7 @@ void Character::moveRight(){
 	//moveForward();
 }
 
-void Character::setPosition(float x, float y, float z) {
+void Character::setPosition(double x, double y, double z) {
 	this->setObjPos(x,y,z);
 }
 
@@ -212,6 +215,9 @@ void Character::checkIfFinished(){
 			(fabs(dir_z*z_point-dir_z*z_target)<=0.1) && !on_rot){
 		if(on_move)
 			this->moves++;
+		this->x_point = round(x_point);
+		this->y_point = round(y_point);
+		this->z_point = round(z_point);
 		this->stopMoving();
 	}
 }

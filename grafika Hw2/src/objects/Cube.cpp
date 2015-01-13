@@ -7,7 +7,7 @@
 
 #include "Cube.h"
 
-Cube::Cube(float width,float x,float y,float z,bool center): Object(x,y,z) {
+Cube::Cube(double width,double x,double y,double z,bool center): Object(x,y,z) {
 	this->width = width;
 
 /*	this->x=width/2+x_point;
@@ -50,7 +50,7 @@ void Cube::setRandomColor(){
 	color[3] = 1.0;
 }
 
-void Cube::createCube(float distanceX,float distanceY,float distanceZ){
+void Cube::createCube(double distanceX,double distanceY,double distanceZ){
 	GLfloat n[6][3] = {  /* Normals for the 6 faces of a cube. */
 	  {-1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {1.0, 0.0, 0.0},
 	  {0.0, -1.0, 0.0}, {0.0, 0.0, 1.0}, {0.0, 0.0, -1.0} };
@@ -115,13 +115,15 @@ void Cube::view(){
 		z_point +=move_anim_frame*dir_z;
 		y_point += move_anim_frame*dir_y;
 	}
-
+	glPushMatrix();
+	glTranslatef(0,0,0.5);
 	GLfloat *amb_color = new GLfloat[4]{0.1,0.1,0.1,1.0};//new GLfloat[4]{color[0]/2.0,color[1]/2.0,color[2]/2.0,1.0};
 	applyMaterial(amb_color,color,new GLfloat[4]{1.0,1.0,1.0,1.0},50);
 	createCube(x_point,y_point,z_point);
+	glPopMatrix();
 }
 
-void Cube::setPosition(float x, float y, float z) {
+void Cube::setPosition(double x, double y, double z) {
 	this->setObjPos(x,y,z);
 }
 
@@ -133,6 +135,9 @@ void Cube::update_target(){
 	z_target = z_point+(char_step+gap_size*sizeOfCube)*dir_z;
 	x_target = x_point+(char_step+gap_size*sizeOfCube)*dir_x;
 	y_target = y_point+char_step*dir_y;
+	this->x_target = round(x_target);
+	this->y_target = round(y_target);
+	this->z_target = round(z_target);
 }
 
 void Cube::moveForward(){
@@ -173,6 +178,14 @@ void Cube::setApothema(int apothema){
 int Cube::getApothema(){
 
 }
+bool Cube::isHidden() const {
+	return hidden;
+}
+
+void Cube::hide() {
+	this->hidden = true;
+}
+
 Cube::~Cube() {
 	// TODO Auto-generated destructor stub
 }

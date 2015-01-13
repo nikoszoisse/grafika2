@@ -10,7 +10,7 @@
 /**
  * Creates an Object Token
  */
-Token::Token(float x,float y,float z,float radius,int move)
+Token::Token(double x,double y,double z,double radius,int move)
 		:Object(x,y,z),LightObject(x,y,z+1){
 	this->radius = radius;
 	this->width = radius*2;
@@ -39,7 +39,7 @@ void Token::view(){
 	this->enableLight();
 }
 
-void Token::setPosition(float x,float y,float z){
+void Token::setPosition(double x,double y,double z){
 	this->setObjPos(x,y,z);
 	this->setLightPos(x,y,z-radius/2);
 }

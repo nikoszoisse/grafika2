@@ -2,11 +2,11 @@
 #define SETTINGS_H_
 
 #define grid_size 64
-#define gap_size 0.02f
+#define gap_size 0.00f
 #define grid_floor 0
 
-#define char_step 1.0f		/*Char step size*/
-#define move_anim_frame 0.10f /*0 - 1.0*/
+#define char_step 1/*Char step size*/
+#define move_anim_frame 0.10 /*0 - 1.0*/
 #define rotate_anim_frame 10.0f	/*0-90*/
 #define start_x 32.0f		/*start cordinates of character*/
 #define start_y 1.0f

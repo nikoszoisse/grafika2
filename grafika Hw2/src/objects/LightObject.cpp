@@ -13,7 +13,7 @@
  * @param y_pos
  * @param z_pos
  */
-LightObject::LightObject(float x_pos,float y_pos,float z_pos) {
+LightObject::LightObject(double x_pos,double y_pos,double z_pos) {
 
 	lightId = GL_LIGHT0 +num_of_lights;
 	if(num_of_lights < 8)
@@ -63,13 +63,13 @@ void LightObject::disableLight() {
     glDisable(this->lightId);
 }
 
-void LightObject::setLightPos(float x_pos, float y_pos, float z_pos) {
+void LightObject::setLightPos(double x_pos, double y_pos, double z_pos) {
 	this->disableLight();
 	this->qaLightPosition    = new GLfloat[4]{x_pos, y_pos, z_pos, 1.0};
 	//this->spotDirection  = new GLfloat[3]{x_pos,y_pos,z_pos};
 }
 
-void LightObject::setSpotDirection(float x_pos, float y_pos, float z_pos) {
+void LightObject::setSpotDirection(double x_pos, double y_pos, double z_pos) {
 	this->disableLight();
 	this->spotDirection  = new GLfloat[4]{x_pos,y_pos,z_pos,0.0};
 }

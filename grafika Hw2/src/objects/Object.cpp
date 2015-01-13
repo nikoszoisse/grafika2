@@ -9,7 +9,7 @@
 #include <iostream>
 #include <math.h>
 using namespace std;
-Object::Object(float x,float y,float z) {
+Object::Object(double x,double y,double z) {
 	this->x_point = x;
 	this->y_point = y;
 	this->z_point = z;
@@ -46,7 +46,7 @@ Object::Object(float x,float y,float z) {
  * @param y_pos
  * @param z_pos
  */
-void Object::setObjPos(float x_pos, float y_pos, float z_pos) {
+void Object::setObjPos(double x_pos, double y_pos, double z_pos) {
 	this->x_point = x_pos;
 	this->y_point = y_pos;
 	this->z_point = z_pos;
@@ -95,14 +95,14 @@ void Object::applyMaterial(GLfloat *ambient_color,GLfloat *diffuse_color
 }
 /**
  * Returns an array (size 3) with coordinates of object
- * @return float*
+ * @return double*
  */
-float* Object::getObjPosition() {
-	return new float[3]{x_point,y_point,z_point};
+double* Object::getObjPosition() {
+	return new double[3]{x_point,y_point,z_point};
 }
 
-float* Object::getTargetPosition() {
-	return new float[3]{x_target,y_target,z_target};
+double* Object::getTargetPosition() {
+	return new double[3]{x_target,y_target,z_target};
 }
 
 /**
@@ -112,13 +112,13 @@ float* Object::getTargetPosition() {
  */
 
 bool Object::hasCollision(Object* target) {
-	float *pos=target->getObjPosition();
+	double *pos=target->getObjPosition();
 	/*cout <<"x " << x_target <<" "<< pos[0]<<endl;
 	cout <<"y " << y_target <<" "<< pos[1]<<endl;
 	cout <<"z " << z_target <<" "<< pos[2]<<endl;*/
-	if((pos[0]<=this->x_target+gap_size&&pos[0]+1>=x_target+gap_size)&&
-			(pos[1]<=this->y_target&&pos[1]+1>=y_target)&&
-			(pos[2]<=this->z_target+gap_size&&pos[2]+1>=z_target+gap_size)){
+	if((pos[0]<this->x_target+0.5&&pos[0]+1>x_target)&&
+			(pos[1]<this->y_target+0.5&&pos[1]+1>y_target)&&
+			(pos[2]<this->z_target+0.5&&pos[2]+1>z_target)){
 		return true;
 	}
 
@@ -126,6 +126,7 @@ bool Object::hasCollision(Object* target) {
 }
 
 void Object::checkIfFinished(){
+
 	if(fabs(dir_x*x_point-dir_x*x_target)<=0.1 && fabs(dir_y*y_point-dir_y*y_target)<=0.1 &&
 			(fabs(dir_z*z_point-dir_z*z_target)<=0.1) && !on_rot){
 		on_move=false;
@@ -134,19 +135,19 @@ void Object::checkIfFinished(){
 	}
 }
 
-float Object::getWidth(){
+double Object::getWidth(){
 	return width;
 }
 
-float* Object::getDiretion() {
-	return new float[3]{dir_x,dir_y,dir_z};
+double* Object::getDiretion() {
+	return new double[3]{dir_x,dir_y,dir_z};
 }
 
-float Object::getXPos() {
+double Object::getXPos() {
 	return x_point;
 }
 
-float Object::getYPos() {
+double Object::getYPos() {
 	return y_point;
 }
 
@@ -156,7 +157,7 @@ void Object::stopMoving() {
 	target_rot_deg=0;
 }
 
-float Object::getZPos() {
+double Object::getZPos() {
 	return z_point;
 }
 
@@ -177,7 +178,7 @@ int Object::getDir_x(){
 	return dir_x;
 }
 
-void Object::setDirection(float* direction) {
+void Object::setDirection(double* direction) {
 	this->dir_x = direction[0];
 	this->dir_y = direction[1];
 	this->dir_z = direction[2];
@@ -190,13 +191,14 @@ bool Object::isOutOfBounds(){
 		return true;
 	}
 
-	if(this->x_target>grid_size||this->y_target>grid_size||
+	if(this->x_target>grid_size||dir_y*y_target>grid_size||
 			this->z_target>grid_size){
 		return true;
 	}
 
-	if(this->x_point<grid_floor||this->y_point<grid_floor||
+	if(this->x_point<grid_floor||dir_y*y_point<grid_floor||
 			this->z_point<grid_floor){
+		cout << "true" << endl;
 		return true;
 	}
 

@@ -15,11 +15,11 @@ private:
 	GLfloat radius;
 	GLfloat *color;
 public:
-	Sun(float,float,float,float);
+	Sun(double,double,double,double);
 	void hide();
 
 	void view();
-	void setPosition(float,float,float);
+	void setPosition(double,double,double);
 
 	void moveForward(); /*Moves to x, or z*/
 	void moveBackWard(); /*ROtates/ ,Update dir z and call moveFoward*/

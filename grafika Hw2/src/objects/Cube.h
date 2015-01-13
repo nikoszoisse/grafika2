@@ -10,22 +10,25 @@
 
 #include "Object.h"
 #include "settings.h"
-
+#include <math.h>
 class Cube: public Object {
 	private:
-	//float x,y,z;
+	//double x,y,z;
 	GLfloat *color;
+	bool hidden;
 	bool field_center;
-	void createCube(float,float,float);
+	void createCube(double,double,double);
 public:
 	int apothema;
-	Cube(float,float,float,float,bool);
+	bool isHidden() const;
+	void hide();
+	Cube(double,double,double,double,bool);
 	Cube* getCenter();
 	void view();
-	void setPosition(float,float,float);
-	/*float getX();
-	float getY();
-	float getZ();*/
+	void setPosition(double,double,double);
+	/*double getX();
+	double getY();
+	double getZ();*/
 
 	void setRandomColor();
 	void setColor(GLfloat*);
