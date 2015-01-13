@@ -222,6 +222,15 @@ void Character::checkIfFinished(){
 	}
 }
 
+bool Character::isOutOfBounds(){
+	if(this->x_point>grid_size||this->y_point>grid_size||
+				this->z_point>grid_size){
+			return true;
+	}
+
+	return false;
+}
+
 void Character::moveDown() {
 }
 

@@ -31,6 +31,7 @@ public:
 	void moveUp();
 	void moveDown();
 	void update_target();
+	bool isOutOfBounds();
 
 	void checkIfFinished();
 	virtual ~Character();

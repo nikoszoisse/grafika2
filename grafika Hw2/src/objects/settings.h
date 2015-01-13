@@ -24,7 +24,7 @@
 #define sun_size_rad 3.0f
 #define token_size_rad 0.5f
 
-#define hide_token_moves 2
+#define hide_token_moves 30
 #define hide_sun_moves 64
 
 #define sizeOfCube 1.0f

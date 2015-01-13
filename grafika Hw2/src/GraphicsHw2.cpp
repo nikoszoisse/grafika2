@@ -20,7 +20,7 @@
 #include "./objects/Token.h"
 
 using namespace std;
-	Character *player = new Character(0,1,0);//start_x*(sizeOfCube+gap_size), start_y, start_z*(sizeOfCube+gap_size));
+	Character *player = new Character(start_x,start_y,start_z);//start_x*(sizeOfCube+gap_size), start_y, start_z*(sizeOfCube+gap_size));
 	Sun *sun = new Sun(sun_start_x, sun_start_y, sun_start_z, sun_size_rad);
 
 	vector<Cube*> cubes[grid_size];
@@ -58,7 +58,7 @@ using namespace std;
 		for(int floor=grid_floor;floor<grid_size;floor++){
 			for (vector<Cube*>::iterator it = cubes[floor].begin();
 					it != cubes[floor].end(); ++it){
-				if((*it)->ID == match->ID&&!(*it)->getCenter()){
+				if((*it)->ID == match->ID&&!(*it)->isCenter()){
 					cubes[floor].erase(it);
 					return;
 				}
@@ -71,10 +71,15 @@ using namespace std;
 		float player_y=player->getYPos();
 		float player_z=player->getZPos();
 		float player_x=player->getXPos();
-		if(cubes[(int)player_y+1].empty()){
-			cout << player_y <<endl;
-			cout << player_y+1 <<endl;
-			player->setPosition(player_x,player_y+1,player_z);
+		Cube *col_cube;
+		if(col_cube==hasCollusion(player,"z")){
+			Cube *upside_cube;
+			col_cube->setDirection(new double[3]{0,1,0})
+			if(upside_cube==hasCollusion(col_cube,"y")==NULL){
+				player->setPosition(player_x,player_y+1,player_z);
+				player->points+=5;
+			}
+
 		}
 	}
 
@@ -100,6 +105,7 @@ using namespace std;
 	}
 	/*Ερωτημα viii*/
 	void collapse(){
+		bool there_is_collapse=false;
 		for(int floor=grid_size-1;floor!=0;floor--){
 			for (vector<Cube*>::iterator it = cubes[floor].begin();
 					it != cubes[floor].end(); ++it){
@@ -111,10 +117,15 @@ using namespace std;
 				if(!col_cube){
 					cubes[floor-1].push_back((*it));
 					if((int)(*it)->getYPos()<=0){
+						there_is_collapse=true;
 						(*it)->moveDown();
 					}
 				}
 			}
+		}
+
+		if(there_is_collapse){
+			player->points+=50;
 		}
 	}
 	/*Ερωτημα vi*/
@@ -142,14 +153,14 @@ using namespace std;
 		player->setDirection(new double[3]{0,-1,0});
 		player->update_target();
 		if((standing_cube= hasCollusion(player,"y"))){
-			cout << standing_cube->apothema<< endl;
 			if(standing_cube->apothema==0){
 				player->setDirection(new double[3]{dir_x,0,dir_z});
 				return;
 			}
 			else{
 				standing_cube->apothema--;
-				cout << standing_cube->apothema<< endl;
+				standing_cube->setColor(standing_cube->apothema);
+				player->points+=5;
 			}
 
 		}
@@ -244,6 +255,7 @@ using namespace std;
 
 			//Delete the front
 			delete_Cube(col_cube);
+			player->points-=5;
 		}
 	}
 	/*Ερωτημα ix*/
@@ -334,7 +346,7 @@ using namespace std;
 	void pressKey(unsigned char key, int xx, int yy) {
 		show_apothema=false;
 	       switch (key) {
-	             case 'w' : player->moveForward();if(hasCollusion(player,"z")){} break;
+	             case 'w' : player->moveForward();checkIfHeClimbs();break;
 	             case 's' : player->moveBackWard();break;
 	             case 'a' : player->moveLeft(); break;
 	             case 'd' : player->moveRight(); break;
@@ -505,6 +517,7 @@ using namespace std;
 		//PLAyer view
 		if(player->isOutOfBounds()){
 			player->stopMoving();
+			player->points-=20;
 			player->setPosition(start_x,start_y,start_z);
 		}else{
 			player->view();

@@ -20,6 +20,7 @@ class Cube: public Object {
 	void createCube(double,double,double);
 public:
 	int apothema;
+	bool isCenter();
 	bool isHidden() const;
 	void hide();
 	Cube(double,double,double,double,bool);
@@ -31,7 +32,7 @@ public:
 	double getZ();*/
 
 	void setRandomColor();
-	void setColor(GLfloat*);
+	void setColor(int);
 	void moveForward(); /*Moves to x, or z*/
 	void moveBackWard(); /*ROtates/ ,Update dir z and call moveFoward*/
 	void moveLeft();	/*Rotate update dir x and call movefoward*/

@@ -102,6 +102,10 @@ Cube* Cube::getCenter(){
 	return NULL;
 }
 
+bool Cube::isCenter(){
+	return this->field_center;
+}
+
 void Cube::view(){
 	this->checkIfFinished();
 	if((on_move)){
@@ -121,8 +125,15 @@ void Cube::setPosition(double x, double y, double z) {
 	this->setObjPos(x,y,z);
 }
 
-void Cube::setColor(GLfloat* color) {
-	this->color = color;
+void Cube::setColor(int apothema) {
+	if(apothema==0&&!this->field_center)
+		this->color = new GLfloat[4]{0, 0, 1, 1};
+	else if(apothema==1)
+		this->color= new GLfloat[4]{1,1,0,1};
+	else if(apothema==2)
+		this->color=new GLfloat[4]{1,0,0,1};
+	else
+		this->color=new GLfloat[4]{0,1,0,1};
 }
 
 void Cube::update_target(){
