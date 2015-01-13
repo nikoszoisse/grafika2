@@ -11,6 +11,7 @@
 #include <string>
 #include <sstream>
 #include <math.h>
+#include <unistd.h>
 #include "./objects/settings.h"
 #include "./objects/Object.h"
 #include "./objects/Cube.h"
@@ -27,6 +28,7 @@ using namespace std;
 	vector<Token*> tokens;
 
 	bool sun_to_view = true;
+	int numberOfTokensCreated=0;
 
 
 	// the key states. These variables will be zero
@@ -54,6 +56,23 @@ using namespace std;
 	bool show_apothema = false;
 
 
+	void gameOverMessage(){
+		glPushAttrib(GL_CURRENT_BIT);
+		 glColor4f( 1.0, 1.0, 1.0,1.0);
+		  glRasterPos3f(player->getXPos(), player->getYPos()+1,player->getZPos());
+		  int len, i;
+		  //string text="energy";
+		  stringstream string_txt;
+		  string_txt<<"GAME OVER"<< endl;
+
+		  len = string_txt.str().length();
+		  //cout << len << endl;
+		  for (i = 0; i < len; i++) {
+			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24,string_txt.str().c_str()[i]);
+		  }
+		 glPopAttrib();
+	}
+
 	void delete_Cube(Cube* match){
 		for(int floor=grid_floor;floor<grid_size;floor++){
 			for (vector<Cube*>::iterator it = cubes[floor].begin();
@@ -67,21 +86,6 @@ using namespace std;
 	}
 
 
-	void checkIfHeClimbs(){
-		float player_y=player->getYPos();
-		float player_z=player->getZPos();
-		float player_x=player->getXPos();
-		Cube *col_cube;
-		if(col_cube==hasCollusion(player,"z")){
-			Cube *upside_cube;
-			col_cube->setDirection(new double[3]{0,1,0})
-			if(upside_cube==hasCollusion(col_cube,"y")==NULL){
-				player->setPosition(player_x,player_y+1,player_z);
-				player->points+=5;
-			}
-
-		}
-	}
 
 	Cube* hasCollusion(Object* obj,string collusion){
 			int obj_floor;
@@ -103,6 +107,22 @@ using namespace std;
 			}
 			return NULL;
 	}
+
+	void checkIfHeClimbs(){
+			float player_y=player->getYPos();
+			float player_z=player->getZPos();
+			float player_x=player->getXPos();
+			Cube *col_cube;
+			if(col_cube==hasCollusion(player,"z")){
+				Cube *upside_cube;
+				col_cube->setDirection(new double[3]{0,1,0});
+				if(upside_cube==hasCollusion(col_cube,"y")==NULL){
+					player->setPosition(player_x,player_y+1,player_z);
+					player->points+=5;
+				}
+
+			}
+		}
 	/*Ερωτημα viii*/
 	void collapse(){
 		bool there_is_collapse=false;
@@ -361,7 +381,8 @@ using namespace std;
 	             //Hide the sun
 	             case 'c' : sun_to_view = !sun_to_view;sun->hide();cout<<"cubes: "<<cubes[0].size()<<endl;break;
 	             case 'l' : tokens.push_back(new Token(player->getXPos(),
-	            		 player->getYPos(),player->getZPos(),token_size_rad,player->moves));break;
+	            		 player->getYPos(),player->getZPos(),token_size_rad,player->moves));
+	             	 	 numberOfTokensCreated++;break;
 	       }
           // glutPostRedisplay();
 	}
@@ -478,11 +499,6 @@ using namespace std;
 		/*Ερώτημα iii*/
 		int moves;
 		moves = player->moves;
-		sun->setPosition(moves%64+sun_start_x,moves%64+sun_start_y,sun_start_z);
-		//TODO remove sun to view var
-		if(moves<hide_sun_moves && sun_to_view){
-			sun->view();
-		}
 
 		// Draw the TOkens
 		for (vector<Token*>::iterator it = tokens.begin() ; it != tokens.end(); ++it){
@@ -491,6 +507,7 @@ using namespace std;
 			else{
 				(*it)->~Token();
 				tokens.erase(it);
+				numberOfTokensCreated--;
 				break;
 			}
 		}
@@ -523,8 +540,18 @@ using namespace std;
 			player->view();
 		}
 
-
+		sun->setPosition(moves%64+sun_start_x,moves%64+sun_start_y,sun_start_z);
+		//TODO remove sun to view var
+		if(moves<hide_sun_moves && sun_to_view){
+			sun->view();
+		}
+		else{
+			if(numberOfTokensCreated==0){
+				gameOverMessage();
+			}
+		}
 		energyText();
+
 		if(show_apothema)
 			showApothema();
 		glutSwapBuffers();
