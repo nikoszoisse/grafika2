@@ -19,6 +19,7 @@ private:
 	void renderCharHead();
 public:
 	int moves;
+	int points;
 	Character(float,float,float);
 	void view();
 	void setPosition(float,float,float);
@@ -31,6 +32,7 @@ public:
 	void moveDown();
 	void update_target();
 
+	void checkIfFinished();
 	virtual ~Character();
 };
 

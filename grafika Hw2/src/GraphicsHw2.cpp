@@ -9,6 +9,7 @@
 #include<iostream>
 #include <vector>
 #include <string>
+#include <sstream>
 #include <math.h>
 #include "./objects/settings.h"
 #include "./objects/Object.h"
@@ -19,7 +20,7 @@
 #include "./objects/Token.h"
 
 using namespace std;
-	Character *player = new Character(start_x, start_y, start_z);
+	Character *player = new Character(start_x*(sizeOfCube+gap_size), start_y, start_z*(sizeOfCube+gap_size));
 	Sun *sun = new Sun(sun_start_x, sun_start_y, sun_start_z, sun_size_rad);
 
 	vector<Cube*> cubes[grid_size];
@@ -52,11 +53,31 @@ using namespace std;
 	int v_Key_pressed_times = 0;
 
 
+
+	void showApothema(){
+		//show Text;
+	}
+
+	void energyText(){
+		glColor3f( 1, 1, 1 );
+		  glRasterPos3f(player->getXPos(), player->getYPos()+1,player->getZPos());
+		  int len, i;
+		  //string text="energy";
+		  stringstream text;
+		  text<<"energy: "<<player->points<<endl;
+		  const char *textData = text.str().data();
+		  //len =textData->len;// text.str().length();
+		  //cout << len << endl;
+		  for (i = 0; i < len; i++) {
+		    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, textData[i]);
+		  }
+	}
+
 	void delete_Cube(Cube* match){
 		for(int floor=grid_floor;floor<grid_size;floor++){
 			for (vector<Cube*>::iterator it = cubes[floor].begin();
 					it != cubes[floor].end(); ++it){
-				if((*it)->ID == match->ID){
+				if((*it)->ID == match->ID&&!(*it)->getCenter()){
 					cubes[floor].erase(it);
 					return;
 				}
@@ -83,7 +104,7 @@ using namespace std;
 			else if(collusion == "y"){
 				obj_floor = obj->getYPos() + 1*obj->getDir_y();
 				if(obj_floor < grid_floor)
-					obj_floor = grid_floor;
+					return false;
 			}
 
 			for (vector<Cube*>::iterator it = cubes[obj_floor].begin() ; it != cubes[obj_floor].end(); ++it){
@@ -94,6 +115,25 @@ using namespace std;
 				}
 			}
 			return NULL;
+	}
+	/*Ερωτημα viii*/
+	void collapse(){
+		for(int floor=grid_size-1;floor!=0;floor--){
+			for (vector<Cube*>::iterator it = cubes[floor].begin();
+					it != cubes[floor].end(); ++it){
+
+				Cube * col_cube;
+
+				(*it)->moveDown();
+				col_cube = hasCollusion((*it),"y");
+				if(!col_cube){
+					cubes[floor-1].push_back((*it));
+					if((int)(*it)->getYPos()<=0){
+						(*it)->moveDown();
+					}
+				}
+			}
+		}
 	}
 	/*Ερωτημα vi*/
 	int get_creation_floor(Object* creator){
@@ -110,21 +150,35 @@ using namespace std;
 	}
 	/*Ερωτημα vi*/
 	void createCube(){
-		Cube *cube,*col_cube;
+		Cube *cube,*col_cube,*standing_cube;
 		int creation_floor,dir_x,dir_z;
 		creation_floor = player->getYPos();
 		dir_x = player->getDir_x();
 		dir_z = player->getDir_z();
 
+		player->setDirection(new float[3]{0,-1,0});
 		player->update_target();
+		if((standing_cube= hasCollusion(player,"y"))){
+			if(standing_cube->apothema==0){
+				cout << standing_cube->apothema<< endl;
+				player->setDirection(new float[3]{dir_x,0,dir_z});
+				return;
+			}
+			else{
+				standing_cube->apothema--;
+				cout << standing_cube->apothema<< endl;
+			}
 
+		}
+
+		player->setDirection(new float[3]{dir_x,0,dir_z});
+		player->update_target();
 		if((col_cube = hasCollusion(player,"z"))){
 			float * col_cube_dir = new float[3]{0,1,0};
 			col_cube->setDirection(col_cube_dir);
 			col_cube->update_target();
 			creation_floor += get_creation_floor(col_cube);
 		}
-
 		if(dir_x){
 			cube=new Cube(sizeOfCube,player->getXPos()+dir_x*1,
 					creation_floor,player->getZPos(),false);
@@ -138,6 +192,7 @@ using namespace std;
 		if(cube!=NULL){
 			cube->setRandomColor();
 			cubes[creation_floor].push_back(cube);
+
 		}
 	}
 	/*Ερώτημα viii*/
@@ -176,7 +231,6 @@ using namespace std;
 	}
 
 	void delete_half_collum(Object* bad_guy){
-		cout << "e"<<endl;
 		Cube *col_cube;
 		bad_guy->update_target();
 
@@ -195,14 +249,14 @@ using namespace std;
 		player->update_target();
 		if((col_cube = hasCollusion(player,"z"))){
 			//TODO MAybe not needed Delte the half row
-			col_cube->setDirection(player->getDiretion());
-			delete_half_row(col_cube);
+			//col_cube->setDirection(player->getDiretion());
+			//delete_half_row(col_cube);
 
 			//Delete the whole Column
 			col_cube->setDirection(direction);
 			delete_half_collum(col_cube);
 			direction[1] = -1; //update the y
-			col_cube->setDirection(direction);
+			//col_cube->setDirection(direction);
 			delete_half_collum(col_cube);
 
 			//Delete the front
@@ -256,13 +310,15 @@ using namespace std;
 	void pressKey(unsigned char key, int xx, int yy) {
 
 	       switch (key) {
-	             case 'w' : player->moveForward();hasCollusion(player,"z"); break;
+	             case 'w' : player->moveForward();if(hasCollusion(player,"z")){} break;
 	             case 's' : player->moveBackWard();break;
 	             case 'a' : player->moveLeft(); break;
 	             case 'd' : player->moveRight(); break;
 	             case 'v' : v_Key_pressed_times++;break;
 	             case 'e' : delete_collum_row();break;
 	             case 'q' : delete_font_cube();break;
+	             case 'r' : collapse();break;
+	             case 'g' : showApothema();break;
 	             //TODO remove z, is for testing light Position
 	             case 'z' : sun->setPosition(1.0f,3.0f,130.0f);break;
 	             case 'x' : sun->setPosition(1.0f,1.0f,65.0f);break;
@@ -328,15 +384,12 @@ using namespace std;
 					for(int j=0;j<=grid_size;j++){
 						Cube* tmp;
 						if((i==grid_size/2&&j==grid_size/2)){
-							tmp = new Cube(sizeOfCube,i*(sizeOfCube+gap_size),1,(j+1)*(sizeOfCube+gap_size),center);
-							tmp->setRandomColor();
-							cubes[1].push_back(tmp);
 							center = true;
 						}
 						else{
 							center = false;
 						}
-
+						//tmp = new Cube(sizeOfCube,i*sizeOfCube+gap_size,0,j*sizeOfCube+gap_size,center);
 						tmp = new Cube(sizeOfCube,i*(sizeOfCube+gap_size),0,j*(sizeOfCube+gap_size),center);
 						//tmp = new Cube(sizeOfCube,(i+gap_size)*sizeOfCube,0,(j+gap_size)*sizeOfCube,center);
 						tmp->setRandomColor();
@@ -383,6 +436,7 @@ using namespace std;
 		gluLookAt(	x_eye, y_eye, z_eye,
 				x_center+lx, y_center+ly,  z_center+lz,
 				0.0f, 1.0f,  0.0f);
+		energyText();
 
 		//SUN
 		/*Ερώτημα iii*/
@@ -393,15 +447,6 @@ using namespace std;
 		if(moves<hide_sun_moves && sun_to_view){
 			sun->view();
 		}
-
-		//PLAyer view
-		if(player->isOutOfBounds()){
-			player->stopMoving();
-			player->setPosition(start_x,start_y,start_z);
-		}else{
-			player->view();
-		}
-
 
 		// Draw the TOkens
 		for (vector<Token*>::iterator it = tokens.begin() ; it != tokens.end(); ++it){
@@ -414,16 +459,33 @@ using namespace std;
 			}
 		}
 		// Draw the GROUND
+		//cout << "size 1: "<< cubes[0].size()<<endl;
 		for(int floor=grid_floor;floor<grid_size;floor++){
 			for (vector<Cube*>::iterator it = cubes[floor].begin() ; it != cubes[floor].end(); ++it){
-				if((*it)->isOutOfBounds() && floor>grid_floor){
+				if(( (*it)->isOutOfBounds() && !(*it)->isMoving()) /*&& floor != grid_floor)*/){
 					cubes[floor].erase(it);
 					//glutPostRedisplay();
 					break;
 				}
+				/*if((*it)->getDir_y()!=0&&(*it)->getYPos()*(*it)->getDir_y() < floor
+						&& !(*it)->isMoving()){
+					cout<< (*it)->getYPos()*(*it)->getDir_y() << " "<< floor<<endl;
+					cubes[floor].erase(it);
+					//glutPostRedisplay();
+					break;
+				}*/
 				(*it)->view();
 			}
 		}
+
+		//PLAyer view
+		if(player->isOutOfBounds()){
+			player->stopMoving();
+			player->setPosition(start_x,start_y,start_z);
+		}else{
+			player->view();
+		}
+
 
 
 		glutSwapBuffers();

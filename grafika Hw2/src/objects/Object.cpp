@@ -130,7 +130,6 @@ void Object::checkIfFinished(){
 			(fabs(dir_z*z_point-dir_z*z_target)<=0.1) && !on_rot){
 		on_move=false;
 		on_jump=false;
-
 		target_rot_deg=0;
 	}
 }
@@ -152,7 +151,9 @@ float Object::getYPos() {
 }
 
 void Object::stopMoving() {
-	on_move = false;
+	on_move=false;
+	on_jump=false;
+	target_rot_deg=0;
 }
 
 float Object::getZPos() {
@@ -184,15 +185,26 @@ void Object::setDirection(float* direction) {
 
 bool Object::isOutOfBounds(){
 	/*Out of Bundaries*/
-	if(this->x_point>=grid_size||this->y_point>=grid_size||
-			this->z_point>=grid_size){
+	if(this->x_point>grid_size||this->y_point>grid_size||
+			this->z_point>grid_size){
 		return true;
 	}
 
-	if(this->x_target>=grid_size||this->y_target>=grid_size||
-			this->z_target>=grid_size){
+	if(this->x_target>grid_size||this->y_target>grid_size||
+			this->z_target>grid_size){
 		return true;
 	}
+
+	if(this->x_point<grid_floor||this->y_point<grid_floor||
+			this->z_point<grid_floor){
+		return true;
+	}
+
+	if(this->x_target<grid_floor||this->y_target<grid_floor||
+			this->z_target<grid_floor){
+		return true;
+	}
+
 	return false;
 }
 

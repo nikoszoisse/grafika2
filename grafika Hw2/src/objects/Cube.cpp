@@ -23,22 +23,27 @@ void Cube::setRandomColor(){
 	if(field_center==true){
 		color[0]=1.0;
 		color[2]=1.0;
+		apothema=0;
 	}
 	else{
 		int number=rand()%4;
 		if(number==0){
 			color[0]=1.0;
+			apothema=2;
 		}
 		else if(number==1){
 			color[2]=1.0;
+			apothema=0;
 		}
 		else if(number==2){
 			color[1]=1.0;
+			apothema=3;
 		}
 		else
 		{
 			color[0]=1.0;
 			color[1]=1.0;
+			apothema=1;
 		}
 	}
 	//ALpa
@@ -142,77 +147,32 @@ void Cube::moveForward(){
 }
 
 void Cube::moveBackWard(){
-	if(on_rot || on_move)
-		return;
-
-	if(dir_z){
-		dir_z *=(-1);
-		dir_x = 0;
-	}
-	else if(dir_x){
-		dir_x *=(-1);
-		dir_z = 0;
-	}
-
-	on_rot = true;
-	//this->curr_rot_deg = 0*dir_z + curr_rot_deg*dir_x*dir_x;
-	//target_rot_deg= 180*dir_z + 180*dir_x + dir_x*curr_rot_deg + dir_z*curr_rot_deg;
-	this->target_rot_deg = 180+curr_rot_deg;
-	this->clock_rot = dir_x + dir_z;
-
-	//moveForward();
 }
 
 void Cube::moveLeft(){
-	if(on_rot || on_move)
-		return;
-	if(dir_z){
-		dir_x= dir_z;
-		dir_z = 0;
-	}
-	else if(dir_x){
-		dir_z=-1*dir_x;
-		dir_x = 0;
-	}
-
-	on_rot = true;
-	clock_rot = 1;
-	target_rot_deg=90+curr_rot_deg;
-	//this->clock_rot = dir_x + dir_z;
-	//moveForward();
 }
 
 void Cube::moveRight(){
-	if(on_rot || on_move)
-		return;
-
-	if(dir_z){
-		dir_x = -1*dir_z;
-		dir_z = 0;
-	}
-	else if(dir_x){
-		dir_z = dir_x;
-		dir_x=0;
-	}
-
-	on_rot = true;
-	clock_rot = -1;
-	target_rot_deg=90+curr_rot_deg;
-	//moveForward();
 }
 
 
 void Cube::moveUp() {
-	dir_y = 1;
-	//on_rot = true;
-	on_jump = true;
-	//clock_rot = -1;
-	//target_rot_deg = 360;
 }
 
 void Cube::moveDown() {
+	dir_x=0;
+	dir_y=-1;
+	dir_z=0;
+	this->update_target();
+	on_move = true;
+}
+void Cube::setApothema(int apothema){
+	this->apothema=apothema;
 }
 
+int Cube::getApothema(){
+
+}
 Cube::~Cube() {
 	// TODO Auto-generated destructor stub
 }

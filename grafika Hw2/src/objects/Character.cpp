@@ -15,24 +15,23 @@ Character::Character(float x_pos,float y_pos,float z_pos):
 	// TODO Auto-generated constructor stub
 	this->width = 0.5;
 	this->moves = 0;
+	this->points=start_points;
 }
 
 void Character::view() {
 	this->checkIfFinished();
 	//Do Move animyion
-	if((on_move && !on_rot) || (on_jump && on_rot)){
+	if((on_move && !on_rot)){
 		x_point += move_anim_frame*dir_x;
-		z_point +=move_anim_frame*dir_z;
 		y_point += move_anim_frame*dir_y;
+		z_point += move_anim_frame*dir_z;
 	}
 	//Do Rotate Animation
-	if(on_rot || on_jump){
-		on_move=false;
+	if(on_rot){
+		//on_move=false;
 		curr_rot_deg += rotate_anim_frame;
 		if(abs(target_rot_deg) <= curr_rot_deg){
 			on_rot=false;
-			//on_move=true;
-			//moveForward();
 		}
 	}
 	glPushMatrix();
@@ -120,6 +119,7 @@ void Character::update_target(){
 	z_target = z_point+(char_step+gap_size*sizeOfCube)*dir_z;
 	x_target = x_point+(char_step+gap_size*sizeOfCube)*dir_x;
 	y_target = y_point+char_step*dir_y;
+	cout << "x: "<< x_target<<" y: "<<y_target << " z: "<<z_target<<endl;
 }
 
 void Character::moveForward(){
@@ -131,7 +131,6 @@ void Character::moveForward(){
 	update_target();
 
 	on_move=true;
-	this->moves++;
 }
 
 void Character::moveBackWard(){
@@ -205,6 +204,16 @@ void Character::moveUp() {
 	on_jump = true;
 	clock_rot = -1;
 	target_rot_deg = 360;
+	this->update_target();
+}
+
+void Character::checkIfFinished(){
+	if(fabs(dir_x*x_point-dir_x*x_target)<=0.1 && fabs(dir_y*y_point-dir_y*y_target)<=0.1 &&
+			(fabs(dir_z*z_point-dir_z*z_target)<=0.1) && !on_rot){
+		if(on_move)
+			this->moves++;
+		this->stopMoving();
+	}
 }
 
 void Character::moveDown() {

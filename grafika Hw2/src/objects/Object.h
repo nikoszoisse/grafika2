@@ -44,8 +44,7 @@ protected:
 	void applyMaterial(GLfloat*,GLfloat*,GLfloat*,GLfloat*,GLfloat);
 	void setObjPos(float,float,float);
 	//ANimation
-	void checkIfFinished();
-	bool isMoving();
+	virtual void checkIfFinished();
 private:
 	//Xrwma otan den xtypa t fws
 	GLfloat *ambient_color;
@@ -91,6 +90,7 @@ public:
 	virtual int getDir_z();
 	virtual int getDir_y();
 	virtual int getDir_x();
+	bool isMoving();
 
 	virtual ~Object();
 };

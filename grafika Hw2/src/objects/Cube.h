@@ -18,6 +18,7 @@ class Cube: public Object {
 	bool field_center;
 	void createCube(float,float,float);
 public:
+	int apothema;
 	Cube(float,float,float,float,bool);
 	Cube* getCenter();
 	void view();
@@ -35,6 +36,8 @@ public:
 	void moveUp();
 	void moveDown();
 	void update_target();
+	int getApothema();
+	void setApothema(int);
 
 	virtual ~Cube();
 };
