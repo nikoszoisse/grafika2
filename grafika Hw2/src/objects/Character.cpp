@@ -116,8 +116,8 @@ void Character::renderCharLegs(){
 	glPopMatrix();
 }
 void Character::update_target(){
-	z_target = z_point+(char_step+gap_size*sizeOfCube)*dir_z;
-	x_target = x_point+(char_step+gap_size*sizeOfCube)*dir_x;
+	z_target = z_point+char_step*dir_z;
+	x_target = x_point+char_step*dir_x;
 	y_target = y_point+char_step*dir_y;
 	this->x_target = round(x_target);
 	this->y_target = round(y_target);

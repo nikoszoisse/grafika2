@@ -6,14 +6,8 @@
  */
 
 #include "Cube.h"
-
 Cube::Cube(double width,double x,double y,double z,bool center): Object(x,y,z) {
 	this->width = width;
-
-/*	this->x=width/2+x_point;
-	this->y=width/2+y_point;
-	this->z=width/2+z_point;
-*/
 	this->field_center =center;
 }
 
@@ -116,7 +110,7 @@ void Cube::view(){
 		y_point += move_anim_frame*dir_y;
 	}
 	glPushMatrix();
-	glTranslatef(0,0,0.5);
+	glTranslatef(gap_size,0,gap_size+0.5);
 	GLfloat *amb_color = new GLfloat[4]{0.1,0.1,0.1,1.0};//new GLfloat[4]{color[0]/2.0,color[1]/2.0,color[2]/2.0,1.0};
 	applyMaterial(amb_color,color,new GLfloat[4]{1.0,1.0,1.0,1.0},50);
 	createCube(x_point,y_point,z_point);
@@ -171,13 +165,7 @@ void Cube::moveDown() {
 	this->update_target();
 	on_move = true;
 }
-void Cube::setApothema(int apothema){
-	this->apothema=apothema;
-}
 
-int Cube::getApothema(){
-
-}
 bool Cube::isHidden() const {
 	return hidden;
 }
@@ -185,6 +173,7 @@ bool Cube::isHidden() const {
 void Cube::hide() {
 	this->hidden = true;
 }
+
 
 Cube::~Cube() {
 	// TODO Auto-generated destructor stub

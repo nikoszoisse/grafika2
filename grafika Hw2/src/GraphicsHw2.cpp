@@ -51,27 +51,8 @@ using namespace std;
 	float yangle = 0.0f;
 
 	int v_Key_pressed_times = 0;
+	bool show_apothema = false;
 
-
-
-	void showApothema(){
-		//show Text;
-	}
-
-	void energyText(){
-		glColor3f( 1, 1, 1 );
-		  glRasterPos3f(player->getXPos(), player->getYPos()+1,player->getZPos());
-		  int len, i;
-		  //string text="energy";
-		  stringstream text;
-		  text<<"energy: "<<player->points<<endl;
-		  const char *textData = text.str().data();
-		  //len =textData->len;// text.str().length();
-		  //cout << len << endl;
-		  for (i = 0; i < len; i++) {
-		    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, textData[i]);
-		  }
-	}
 
 	void delete_Cube(Cube* match){
 		for(int floor=grid_floor;floor<grid_size;floor++){
@@ -271,8 +252,8 @@ using namespace std;
 			v_Key_pressed_times = 0;
 			// Set the camera
 			x_eye = player->getXPos();
-			y_eye = player->getYPos()+2;
-			z_eye = player->getZPos()-2;
+			y_eye = player->getYPos()+3;
+			z_eye = player->getZPos()-3;
 
 			x_center = x_eye;
 			y_center = y_eye-1;
@@ -302,15 +283,56 @@ using namespace std;
 			z_eye = grid_size;
 		}
 	}
+	void showApothema(){
+		Cube* cube;
+		double *direction =player->getDiretion();
 
-	void processNormalKeys(unsigned char key, int xx, int yy) {
+		player->setDirection(new double[3]{0,-1,0});
+		player->update_target();
 
+		if((cube = hasCollusion(player,"y"))){
+		 glPushAttrib(GL_CURRENT_BIT);
+		 glColor4f( 1.0, 1.0, 1.0,1.0);
+		  glRasterPos3f(player->getXPos(), player->getYPos()+1,player->getZPos());
+		  int len, i;
+		  //string text="energy";
+		  stringstream string_txt;
+		  string_txt<<"Apothema: "<<cube->apothema<< endl;
+
+		  len = string_txt.str().length();
+		  //cout << len << endl;
+		  for (i = 0; i < len; i++) {
+		    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24,string_txt.str().c_str()[i]);
+		  }
+		 glPopAttrib();
+		}
+		player->setDirection(direction);
+	}
+
+	void energyText(){
+		 glPushAttrib(GL_CURRENT_BIT);
+		 glColor4f( 1.0, 1.0, 1.0,1.0);
+		  glRasterPos3f(player->getXPos(), player->getYPos(),player->getZPos()-1);
+		  int len, i;
+		  //string text="energy";
+		  stringstream string_txt;
+		  string_txt<<"Total moves: "<<player->moves<<" Cur points: "<<player->points<< endl;
+
+		  len = string_txt.str().length();
+		  //cout << len << endl;
+		  for (i = 0; i < len; i++) {
+		    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24,string_txt.str().c_str()[i]);
+		  }
+		 glPopAttrib();
+	}
+
+	void processNormalKeys(int key, int xx, int yy) {
 	        if (key == 27)
 	              exit(0);
 	}
 
 	void pressKey(unsigned char key, int xx, int yy) {
-
+		show_apothema=false;
 	       switch (key) {
 	             case 'w' : player->moveForward();if(hasCollusion(player,"z")){} break;
 	             case 's' : player->moveBackWard();break;
@@ -320,7 +342,7 @@ using namespace std;
 	             case 'e' : delete_collum_row();break;
 	             case 'q' : delete_font_cube();break;
 	             case 'r' : collapse();break;
-	             case 'g' : showApothema();break;
+	             case 'g' : show_apothema=true;break;
 	             //TODO remove z, is for testing light Position
 	             case 'z' : sun->setPosition(1.0f,3.0f,130.0f);break;
 	             case 'x' : sun->setPosition(1.0f,1.0f,65.0f);break;
@@ -439,7 +461,6 @@ using namespace std;
 		gluLookAt(	x_eye, y_eye, z_eye,
 				x_center+lx, y_center+ly,  z_center+lz,
 				0.0f, 1.0f,  0.0f);
-		energyText();
 
 		//SUN
 		/*Ερώτημα iii*/
@@ -490,7 +511,9 @@ using namespace std;
 		}
 
 
-
+		energyText();
+		if(show_apothema)
+			showApothema();
 		glutSwapBuffers();
 	}
 
@@ -507,7 +530,7 @@ using namespace std;
 		glutIgnoreKeyRepeat(1);
 		glutKeyboardFunc(pressKey);
 		glutKeyboardUpFunc(releaseKey);
-		//glutSpecialFunc(pressKey);
+		glutSpecialFunc(processNormalKeys);
 		//glutSpecialUpFunc(releaseKey);
 
 		// OpenGL init

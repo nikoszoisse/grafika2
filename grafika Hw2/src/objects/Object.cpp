@@ -198,7 +198,6 @@ bool Object::isOutOfBounds(){
 
 	if(this->x_point<grid_floor||dir_y*y_point<grid_floor||
 			this->z_point<grid_floor){
-		cout << "true" << endl;
 		return true;
 	}
 
