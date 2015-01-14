@@ -117,10 +117,11 @@ using namespace std;
 			double *tmp_dir=player->getDiretion();
 			if(col_cube=hasCollusion(player,"z")){
 				Cube *upside_cube;
-				col_cube->setDirection(new double[3]{0,1,0});
+				//col_cube->setDirection(new double[3]{0,1,0});
 
 				if(upside_cube=hasCollusion(col_cube,"y")==NULL){
-					player->setPosition(player_x,player_y+1,player_z);
+					player->setPosition(player_x+0.5,player_y+1,player_z+1);
+					player->setDirection(new double[3]{0,0,1});
 					player->points+=5;
 				}
 			}
