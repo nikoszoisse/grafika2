@@ -126,8 +126,7 @@ void Character::update_target(){
 	this->x_target = round(x_target);
 	this->y_target = round(y_target);
 	this->z_target = round(z_target);
-	//cout << "TArget updated to"<<endl;
-	//cout << "x: "<< x_target<<" y: "<<y_target << " z: "<<z_target<<endl;
+
 }
 
 void Character::moveForward(){
@@ -218,8 +217,8 @@ void Character::moveUp() {
 void Character::checkIfFinished(){
 	if(fabs(dir_x*x_point-dir_x*x_target)<=0.1 && fabs(dir_y*y_point-dir_y*y_target)<=0.1 &&
 			(fabs(dir_z*z_point-dir_z*z_target)<=0.1) && !on_rot){
-		if(on_move && !falling)
-			this->moves++;
+
+		this->moves++;
 
 		this->x_point = round(x_point);
 		this->y_point = round(y_point);
@@ -247,7 +246,6 @@ void Character::moveDown() {
 	moveForward();
 }
  void Character::restore(){
-	 cout << "times"<<endl;
 		this->dir_x = 0;
 		this->dir_y = 0;
 		this->dir_z = 1;

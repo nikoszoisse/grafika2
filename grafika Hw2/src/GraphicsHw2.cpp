@@ -114,14 +114,15 @@ using namespace std;
 			float player_z=player->getZPos();
 			float player_x=player->getXPos();
 			Cube *col_cube;
-			if(col_cube==hasCollusion(player,"z")){
+			double *tmp_dir=player->getDiretion();
+			if(col_cube=hasCollusion(player,"z")){
 				Cube *upside_cube;
 				col_cube->setDirection(new double[3]{0,1,0});
-				if(upside_cube==hasCollusion(col_cube,"y")==NULL){
+
+				if(upside_cube=hasCollusion(col_cube,"y")==NULL){
 					player->setPosition(player_x,player_y+1,player_z);
 					player->points+=5;
 				}
-
 			}
 		}
 	/*Ερωτημα viii*/
@@ -172,7 +173,6 @@ using namespace std;
 		player->update_target();
 
 		if(!(standing_cube = hasCollusion(player,"y"))){
-			cout << "HOLY sHIT"<<endl;
 			fallen_fields++;
 			//if we ose only 1 field dont minus points
 			player->points -= (fallen_fields-1)*5;
@@ -254,17 +254,6 @@ using namespace std;
 		player->update_target();
 
 		if((col_cube = hasCollusion(player,"z"))){
-			delete_Cube(col_cube);
-		}
-	}
-	void delete_half_row(Object* bad_guy){
-		Cube *col_cube;
-		bad_guy->update_target();
-
-		if((col_cube = hasCollusion(bad_guy,"z"))){
-			col_cube->setDirection(bad_guy->getDiretion());
-			delete_half_row(col_cube);
-
 			delete_Cube(col_cube);
 		}
 	}
@@ -406,21 +395,21 @@ using namespace std;
 	void pressKey(unsigned char key, int xx, int yy) {
 		show_apothema=false;
 	       switch (key) {
-	             case 'w' : player->moveForward();checkIfHeClimbs();break;
-	             case 's' : player->moveBackWard();camera_changed=true;break;
-	             case 'a' : player->moveLeft(); camera_changed=true;break;
-	             case 'd' : player->moveRight(); camera_changed=true;break;
+	             case 'W' : player->moveForward();checkIfHeClimbs();break;
+	             case 'S' : player->moveBackWard();camera_changed=true;break;
+	             case 'A' : player->moveLeft(); camera_changed=true;break;
+	             case 'D' : player->moveRight(); camera_changed=true;break;
 	             case 'v' : v_Key_pressed_times++;break;
-	             case 'e' : delete_collum_row();break;
-	             case 'q' : delete_font_cube();break;
-	             case 'r' : collapse();break;
-	             case 'g' : show_apothema=true;break;
+	             case 'E' : delete_collum_row();break;
+	             case 'Q' : delete_font_cube();break;
+	             case 'R' : collapse();break;
+	             case 32 : show_apothema=true;break;
 	             //TODO remove z, is for testing light Position
-	             case 'z' : sun->setPosition(1.0f,3.0f,130.0f);break;
-	             case 'x' : sun->setPosition(1.0f,1.0f,65.0f);break;
+	             case 'Z' : sun->setPosition(1.0f,3.0f,130.0f);break;
+	             case 'X' : sun->setPosition(1.0f,1.0f,65.0f);break;
 	             //Hide the sun
-	             case 'c' : sun_to_view = !sun_to_view;sun->hide();cout<<"cubes: "<<cubes[0].size()<<endl;break;
-	             case 'l' : if(player->tokens>0 ){tokens.push_back(new Token(player->getXPos(),
+	             case 'C' : sun_to_view = !sun_to_view;sun->hide();cout<<"cubes: "<<cubes[0].size()<<endl;break;
+	             case 'L' : if(player->tokens>0 ){tokens.push_back(new Token(player->getXPos(),
 	            		 player->getYPos(),player->getZPos(),token_size_rad,player->moves));
 	             	 	 player->tokens--;}break;
 	       }
