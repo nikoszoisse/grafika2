@@ -2,7 +2,7 @@
 #define SETTINGS_H_
 
 #define grid_size 64
-#define gap_size 0.00f
+#define gap_size 0.5f
 #define grid_floor 0
 
 #define char_step 1/*Char step size*/

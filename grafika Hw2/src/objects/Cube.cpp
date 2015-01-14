@@ -114,7 +114,7 @@ void Cube::view(){
 		y_point += move_anim_frame*dir_y;
 	}
 	glPushMatrix();
-	glTranslatef(gap_size,0,gap_size+0.5);
+	glTranslatef(0,0,0.5);
 	GLfloat *amb_color = new GLfloat[4]{0.1,0.1,0.1,1.0};//new GLfloat[4]{color[0]/2.0,color[1]/2.0,color[2]/2.0,1.0};
 	applyMaterial(amb_color,color,new GLfloat[4]{1.0,1.0,1.0,1.0},50);
 	createCube(x_point,y_point,z_point);

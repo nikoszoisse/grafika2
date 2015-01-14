@@ -55,6 +55,7 @@ using namespace std;
 	int v_Key_pressed_times = 0;
 	bool show_apothema = false;
 	int fallen_fields = 0;
+	bool camera_changed = false;
 
 	void gameOverMessage(){
 		glPushAttrib(GL_CURRENT_BIT);
@@ -307,14 +308,22 @@ using namespace std;
 	void handleCameraView(){
 		if(v_Key_pressed_times%5 == 0){
 			v_Key_pressed_times = 0;
+			double *pl_dir = player->getDiretion();
 			// Set the camera
-			x_eye = player->getXPos();
-			y_eye = player->getYPos()+3;
-			z_eye = player->getZPos()-3;
+			double x_offset = 3*pl_dir[0]*(1-abs(pl_dir[2]));
+			double y_offset = 3*pl_dir[2]*(1-abs(pl_dir[0]));
+			if(camera_changed){
+				lx = pl_dir[0];
+				lz = pl_dir[2];
+				camera_changed=false;
+			}
+			x_eye = player->getXPos()-x_offset;
+			y_eye = player->getYPos()+2;
+			z_eye = player->getZPos()-y_offset/*+3*pl_dir[0]*/;
 
-			x_center = x_eye;
+			x_center = player->getXPos();
 			y_center = y_eye-1;
-			z_center = z_eye;
+			z_center = player->getZPos();
 		}else{
 			x_center = grid_size/2;
 			y_center = 1;
@@ -350,7 +359,10 @@ using namespace std;
 		if((cube = hasCollusion(player,"y"))){
 		 glPushAttrib(GL_CURRENT_BIT);
 		 glColor4f( 1.0, 1.0, 1.0,1.0);
-		  glRasterPos3f(player->getXPos(), player->getYPos()+1,player->getZPos());
+		  double *dir = player->getDiretion();
+		  glRasterPos3f(player->getXPos()+dir[2],
+				  player->getYPos()+1,
+				  player->getZPos()+dir[0]);
 		  int len, i;
 		  //string text="energy";
 		  stringstream string_txt;
@@ -369,7 +381,10 @@ using namespace std;
 	void energyText(){
 		 glPushAttrib(GL_CURRENT_BIT);
 		 glColor4f( 1.0, 1.0, 1.0,1.0);
-		  glRasterPos3f(player->getXPos(), player->getYPos(),player->getZPos()-1);
+		  double *dir = player->getDiretion();
+		  glRasterPos3f(player->getXPos()+0.5*(dir[2]+dir[1]),
+				  player->getYPos(),
+				  player->getZPos()-0.5*(dir[1]+dir[2]));
 		  int len, i;
 		  //string text="energy";
 		  stringstream string_txt;
@@ -392,9 +407,9 @@ using namespace std;
 		show_apothema=false;
 	       switch (key) {
 	             case 'w' : player->moveForward();checkIfHeClimbs();break;
-	             case 's' : player->moveBackWard();break;
-	             case 'a' : player->moveLeft(); break;
-	             case 'd' : player->moveRight(); break;
+	             case 's' : player->moveBackWard();camera_changed=true;break;
+	             case 'a' : player->moveLeft(); camera_changed=true;break;
+	             case 'd' : player->moveRight(); camera_changed=true;break;
 	             case 'v' : v_Key_pressed_times++;break;
 	             case 'e' : delete_collum_row();break;
 	             case 'q' : delete_font_cube();break;
@@ -427,8 +442,8 @@ using namespace std;
 		// this will only be true when the middle button is down
 		if(xOrigin>=0 || yOrigin>=0){
 			// update deltaAngle
-			xdeltaAngle = (mx - xOrigin) * 0.001f;
-			ydeltaAngle = (my- yOrigin) * 0.001f;
+			xdeltaAngle = (mx - xOrigin) * 0.003f;
+			ydeltaAngle = (my- yOrigin) * 0.003f;
 
 			// update camera's direction  (EYE) looks at camera center point
 			lx = sin(xangle + xdeltaAngle);
@@ -513,7 +528,6 @@ using namespace std;
 
 		//Reset transformations
 		glLoadIdentity();
-
 		//Set Camera
 		handleCameraView();
 		gluLookAt(	x_eye, y_eye, z_eye,
