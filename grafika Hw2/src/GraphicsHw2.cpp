@@ -54,7 +54,7 @@ using namespace std;
 
 	int v_Key_pressed_times = 0;
 	bool show_apothema = false;
-
+	int fallen_fields = 0;
 
 	void gameOverMessage(){
 		glPushAttrib(GL_CURRENT_BIT);
@@ -93,7 +93,7 @@ using namespace std;
 				obj_floor= obj->getYPos();
 			else if(collusion == "y"){
 				obj_floor = obj->getYPos() + 1*obj->getDir_y();
-				cout << "obj to seek"<<obj_floor<<endl;
+				//cout << "obj to seek"<<obj_floor<<endl;
 				if(obj_floor < grid_floor)
 					return false;
 			}
@@ -136,8 +136,8 @@ using namespace std;
 				col_cube = hasCollusion((*it),"y");
 				if(!col_cube){
 					cubes[floor-1].push_back((*it));
+					there_is_collapse=true;
 					if((int)(*it)->getYPos()<=0){
-						there_is_collapse=true;
 						(*it)->moveDown();
 					}
 				}
@@ -161,6 +161,30 @@ using namespace std;
 
 		return 1;
 	}
+
+	void apply_gravity(){
+		Cube *standing_cube;
+		double *prev_dir = player->getDiretion();
+
+		//Update target point
+		player->setDirection(new double[3]{0,-1,0});
+		player->update_target();
+
+		if(!(standing_cube = hasCollusion(player,"y"))){
+			cout << "HOLY sHIT"<<endl;
+			fallen_fields++;
+			//if we ose only 1 field dont minus points
+			player->points -= (fallen_fields-1)*5;
+			player->moveDown();
+		}else{
+			fallen_fields = 0;
+			player->setDirection(prev_dir);
+			player->update_target();
+			//standing_cube->print();
+			//player->moveForward();
+		}
+	}
+
 	/*Ερωτημα vi*/
 	void createCube(){
 		Cube *cube,*col_cube,*standing_cube;
@@ -276,6 +300,7 @@ using namespace std;
 			//Delete the front
 			delete_Cube(col_cube);
 			player->points-=5;
+			player->tokens++;
 		}
 	}
 	/*Ερωτημα ix*/
@@ -380,9 +405,9 @@ using namespace std;
 	             case 'x' : sun->setPosition(1.0f,1.0f,65.0f);break;
 	             //Hide the sun
 	             case 'c' : sun_to_view = !sun_to_view;sun->hide();cout<<"cubes: "<<cubes[0].size()<<endl;break;
-	             case 'l' : tokens.push_back(new Token(player->getXPos(),
+	             case 'l' : if(player->tokens>0 ){tokens.push_back(new Token(player->getXPos(),
 	            		 player->getYPos(),player->getZPos(),token_size_rad,player->moves));
-	             	 	 numberOfTokensCreated++;break;
+	             	 	 player->tokens--;}break;
 	       }
           // glutPostRedisplay();
 	}
@@ -518,12 +543,15 @@ using namespace std;
 				//Erase while cube is out of bounds
 				if(( (*it)->isOutOfBounds() && !(*it)->isMoving())){
 					cubes[floor].erase(it);
+					cout <<"Erased: "<<endl;
+					(*it)->print();
 					break;
 				}
 				/*Cleans up cubes that are not belong in current  floor*/
 				if((*it)->getDir_y()!=0&&(*it)->getYPos() < floor
 						&& !(*it)->isMoving()){
-					cout<< (*it)->getYPos() << " erase: "<< floor<<endl;
+					cout <<"Erased: "<<endl;
+					(*it)->print();
 					cubes[floor].erase(it);
 					break;
 				}
@@ -531,9 +559,12 @@ using namespace std;
 			}
 		}
 
+		if(!player->isMoving()){
+			 apply_gravity();
+		}
 		//PLAyer view
 		if(player->isOutOfBounds()){
-			player->stopMoving();
+			player->restore();
 			player->points-=20;
 			player->setPosition(start_x,start_y,start_z);
 		}else{
@@ -546,7 +577,7 @@ using namespace std;
 			sun->view();
 		}
 		else{
-			if(numberOfTokensCreated==0){
+			if(tokens.empty()){
 				gameOverMessage();
 			}
 		}

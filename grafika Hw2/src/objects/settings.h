@@ -8,10 +8,12 @@
 #define char_step 1/*Char step size*/
 #define move_anim_frame 0.10 /*0 - 1.0*/
 #define rotate_anim_frame 10.0f	/*0-90*/
+
 #define start_x 32.0f		/*start cordinates of character*/
 #define start_y 1.0f
 #define start_z 32.0f
 #define start_points 50;
+#define start_num_tokens 0;
 
 #define sun_start_x 1.0f
 #define sun_start_y 1.0f

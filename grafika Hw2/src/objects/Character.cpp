@@ -16,6 +16,10 @@ Character::Character(double x_pos,double y_pos,double z_pos):
 	this->width = 0.5;
 	this->moves = 0;
 	this->points=start_points;
+	this->dir_z=1;
+	this->dir_x=0;
+	this->dir_y=0;
+	this->tokens = start_num_tokens;
 }
 
 void Character::view() {
@@ -122,7 +126,8 @@ void Character::update_target(){
 	this->x_target = round(x_target);
 	this->y_target = round(y_target);
 	this->z_target = round(z_target);
-	cout << "x: "<< x_target<<" y: "<<y_target << " z: "<<z_target<<endl;
+	//cout << "TArget updated to"<<endl;
+	//cout << "x: "<< x_target<<" y: "<<y_target << " z: "<<z_target<<endl;
 }
 
 void Character::moveForward(){
@@ -204,7 +209,7 @@ void Character::setPosition(double x, double y, double z) {
 void Character::moveUp() {
 	dir_y = 1;
 	on_rot = true;
-	on_jump = true;
+	jumping = true;
 	clock_rot = -1;
 	target_rot_deg = 360;
 	this->update_target();
@@ -213,8 +218,9 @@ void Character::moveUp() {
 void Character::checkIfFinished(){
 	if(fabs(dir_x*x_point-dir_x*x_target)<=0.1 && fabs(dir_y*y_point-dir_y*y_target)<=0.1 &&
 			(fabs(dir_z*z_point-dir_z*z_target)<=0.1) && !on_rot){
-		if(on_move)
+		if(on_move && !falling)
 			this->moves++;
+
 		this->x_point = round(x_point);
 		this->y_point = round(y_point);
 		this->z_point = round(z_point);
@@ -222,17 +228,36 @@ void Character::checkIfFinished(){
 	}
 }
 
-bool Character::isOutOfBounds(){
-	if(this->x_point>grid_size||this->y_point>grid_size||
+/*bool Character::isOutOfBounds(){
+	if(this->x_point>grid_size||this->y_point<grid_floor||
 				this->z_point>grid_size){
 			return true;
 	}
 
 	return false;
-}
+}*/
 
 void Character::moveDown() {
+	if(on_move)
+		return;
+	dir_x=0;
+	dir_y=-1;
+	dir_z=0;
+	falling = true;
+	moveForward();
 }
-
+ void Character::restore(){
+	 cout << "times"<<endl;
+		this->dir_x = 0;
+		this->dir_y = 0;
+		this->dir_z = 1;
+		this->on_move = false;
+		this->on_rot = false;
+		this->jumping = false;
+		this->falling = false;
+		this->target_rot_deg=0;
+		this->curr_rot_deg=0;
+		this->clock_rot = 1;
+ }
 Character::~Character() {
 }

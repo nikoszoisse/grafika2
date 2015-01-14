@@ -32,8 +32,8 @@ protected:
 	//Animations
 	bool on_move;
 	bool on_rot;
-	bool on_jump;
-
+	bool jumping;
+	bool falling;
 	double target_rot_deg; /*movefowarrd:0,movrelft,right 90,270, move_back: 180*/
 	double curr_rot_deg; /*Where  to start rotatiing Default =0*/
 	double clock_rot;
@@ -91,7 +91,7 @@ public:
 	virtual int getDir_y();
 	virtual int getDir_x();
 	bool isMoving();
-
+	void print();
 	virtual ~Object();
 };
 

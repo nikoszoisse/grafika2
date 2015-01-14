@@ -22,7 +22,8 @@ Object::Object(double x,double y,double z) {
 	this->width = 0;
 	this->on_move = false;
 	this->on_rot = false;
-	this->on_jump = false;
+	this->jumping = false;
+	this->falling = false;
 	this->target_rot_deg=0;
 	this->curr_rot_deg=0;
 	this->clock_rot = 1;
@@ -130,7 +131,8 @@ void Object::checkIfFinished(){
 	if(fabs(dir_x*x_point-dir_x*x_target)<=0.1 && fabs(dir_y*y_point-dir_y*y_target)<=0.1 &&
 			(fabs(dir_z*z_point-dir_z*z_target)<=0.1) && !on_rot){
 		on_move=false;
-		on_jump=false;
+		jumping=false;
+		falling=false;
 		target_rot_deg=0;
 	}
 }
@@ -152,9 +154,9 @@ double Object::getYPos() {
 }
 
 void Object::stopMoving() {
-	on_move=false;
-	on_jump=false;
-	target_rot_deg=0;
+	on_move= false;
+	jumping= false;
+	falling = true;
 }
 
 double Object::getZPos() {
@@ -186,17 +188,17 @@ void Object::setDirection(double* direction) {
 
 bool Object::isOutOfBounds(){
 	/*Out of Bundaries*/
-	if(this->x_point>grid_size||this->y_point>grid_size||
-			this->z_point>grid_size){
+	if(abs(this->x_point>grid_size)||this->y_point<grid_floor||
+			abs(this->z_point)>grid_size){
 		return true;
 	}
 
-	if(this->x_target>grid_size||dir_y*y_target>grid_size||
-			this->z_target>grid_size){
+	if(abs(this->x_target)>grid_size||y_target<grid_floor||
+			abs(this->z_target)>grid_size){
 		return true;
 	}
 
-	if(this->x_point<grid_floor||dir_y*y_point<grid_floor||
+/*	if(this->x_point<grid_floor||dir_y*y_point<grid_floor||
 			this->z_point<grid_floor){
 		return true;
 	}
@@ -204,9 +206,22 @@ bool Object::isOutOfBounds(){
 	if(this->x_target<grid_floor||this->y_target<grid_floor||
 			this->z_target<grid_floor){
 		return true;
-	}
+	}*/
 
 	return false;
+}
+
+void Object::print(){
+cout << "---Obj Info"<<endl;
+cout << "Obj ID: "<<ID<<endl;
+cout << "Current Pos "<<endl;
+cout << "x ,y ,z"<<endl;
+cout << x_point<<" ,"<<y_point<<" ,"<<z_point<<endl;
+cout << "-------------"<<endl;
+cout << "Target Pos "<<endl;
+cout << "x ,y ,z"<<endl;
+cout << x_target<<" ,"<<y_target<<" ,"<<z_target<<endl;
+cout << "-------------"<<endl;
 }
 
 Object::~Object() {

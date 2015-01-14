@@ -20,9 +20,11 @@ private:
 public:
 	int moves;
 	int points;
+	int tokens;
 	Character(double,double,double);
 	void view();
 	void setPosition(double,double,double);
+	void restore();
 	/*Temp point(to go) from char x,y,z coordinates*/
 	void moveForward(); /*Moves to x, or z*/
 	void moveBackWard(); /*ROtates/ ,Update dir z and call moveFoward*/
@@ -31,7 +33,7 @@ public:
 	void moveUp();
 	void moveDown();
 	void update_target();
-	bool isOutOfBounds();
+	//bool isOutOfBounds();
 
 	void checkIfFinished();
 	virtual ~Character();
