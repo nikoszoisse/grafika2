@@ -39,7 +39,7 @@ void Character::view() {
 		}
 	}
 	glPushMatrix();
-		glTranslatef(x_point,y_point,z_point+dir_x/2.0);
+		glTranslatef(x_point,y_point,z_point/*+dir_x/2.0*/);
 		glRotatef(clock_rot*curr_rot_deg,0,1,0);
 		renderCharBody();
 		renderCharHead();
