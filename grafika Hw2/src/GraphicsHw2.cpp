@@ -114,10 +114,10 @@ using namespace std;
 			float player_z=player->getZPos();
 			float player_x=player->getXPos();
 			Cube *col_cube;
-			if(col_cube==hasCollusion(player,"z")){
+			if((col_cube=hasCollusion(player,"z"))){
 				Cube *upside_cube;
 				col_cube->setDirection(new double[3]{0,1,0});
-				if(upside_cube==hasCollusion(col_cube,"y")==NULL){
+				if(!(upside_cube=hasCollusion(col_cube,"y"))){
 					player->setPosition(player_x,player_y+1,player_z);
 					player->points+=5;
 				}
