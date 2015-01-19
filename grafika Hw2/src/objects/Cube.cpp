@@ -146,7 +146,7 @@ void Cube::update_target(){
 }
 
 void Cube::moveForward(){
-	if(on_move)
+	if(on_move && !falling)
 		return;
 	x_target = x_point;
 	y_target = y_point;
@@ -175,6 +175,7 @@ void Cube::moveDown() {
 	dir_z=0;
 	this->update_target();
 	on_move = true;
+	falling = true;
 }
 
 bool Cube::isHidden() const {
